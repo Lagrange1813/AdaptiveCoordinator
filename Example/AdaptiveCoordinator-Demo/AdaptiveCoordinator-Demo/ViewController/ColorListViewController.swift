@@ -31,9 +31,10 @@ class ColorListViewController: UIViewController {
   
   func configure() {
     view.backgroundColor = .white
+    title = "Palette"
     
     let settingsButton = UIBarButtonItem(title: "Settings", primaryAction: UIAction { [unowned self] _ in
-      router.navigate(to: .settings)
+      router.transfer(to: .settings)
     })
     navigationItem.rightBarButtonItem = settingsButton
     
@@ -65,6 +66,6 @@ extension ColorListViewController: UITableViewDelegate, UITableViewDataSource {
   
   func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
     let color = colors[indexPath.row]
-    router.navigate(to: .color(color))
+    router.transfer(to: .color(color))
   }
 }

@@ -8,16 +8,40 @@
 import UIKit
 
 open class BaseCoordinator<RouteType: Route, BasicViewControllerType: UIViewController>: Coordinator {
-  private(set) public var basicViewController: BasicViewControllerType
+  public typealias BasicViewControllerType = BasicViewControllerType
   
-  public init(basicViewController: BasicViewControllerType) {
-    self.basicViewController = basicViewController
+  private(set) public var basicViewController: BasicViewControllerType
+  public var children = [Presentable]()
+  
+  public var numOfChildren: Int {
+    children.count
   }
   
-  public var viewController: UIViewController {
+  public final var viewController: UIViewController {
     basicViewController
   }
   
-  open func navigate(to route: RouteType) {}
-  open func navigate(to presentable: Presentable) {}
+  public weak var presenter: (any Coordinator)?
+  
+  init(basicViewController: BasicViewControllerType, initialType: RouteType) {
+    self.basicViewController = basicViewController
+    transfer(to: initialType)
+  }
+  
+  open func prepare(to route: RouteType) -> TransferType {
+    fatalError("Please override the \(#function) method.")
+  }
+  
+  public func perform(_ transfer: TransferType) {
+    fatalError("Please override the \(#function) method.")
+  }
+  
+  final public func addChild(_ presentable: Presentable) {
+    children.append(presentable)
+    presentable.presenter = self
+  }
+  
+  final public func removeChild(_ presentable: Presentable) {
+    children.removeAll { $0.viewController === presentable.viewController }
+  }
 }

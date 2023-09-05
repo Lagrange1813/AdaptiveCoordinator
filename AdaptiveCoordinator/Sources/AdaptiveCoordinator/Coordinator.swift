@@ -7,8 +7,22 @@
 
 import UIKit
 
-protocol Coordinator: Router {
+public protocol Coordinator: Router {
   associatedtype BasicViewControllerType
+  
   var basicViewController: BasicViewControllerType { get }
-  func navigate(to presentable: Presentable)
+  var children: [Presentable] { get set }
+  var numOfChildren: Int { get }
+  
+  func prepare(to route: RouteType) -> TransferType
+  func perform(_ transfer: TransferType)
+  func addChild(_ presentable: Presentable)
+  func removeChild(_ presentable: Presentable)
+}
+
+// Router
+extension Coordinator {
+  public func transfer(to route: RouteType) {
+    perform(prepare(to: route))
+  }
 }

@@ -17,8 +17,4 @@ public final class WeakRouter<RouteType: Route> {
   public var viewController: UIViewController? {
     _strongRouter?.viewController
   }
-  
-  public func navigate(to route: RouteType) {
-    _strongRouter?.navigate(to: route)
-  }
 }

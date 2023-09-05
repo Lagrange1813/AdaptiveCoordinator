@@ -17,17 +17,17 @@ enum ColorListRoute: Route {
 }
 
 class ColorListCoordinator: StackCoordinator<ColorListRoute> {
-  override func navigate(to route: ColorListRoute) {
+  override func prepare(to route: ColorListRoute) -> TransferType {
     switch route {
     case .list:
       let viewController = ColorListViewController(strongRouter)
-      navigate(to: viewController)
+      return .push(viewController)
     case .color(let str):
-      let viewController = ColorViewController(color: str)
-      navigate(to: viewController)
+      addChild(ColorCoordinator(basicViewController: basicViewController, initialType: .color(str)))
+      return .none
     case .settings:
       let viewController = SettingsViewController()
-      navigate(to: viewController)
+      return .push(viewController)
     }
   }
 }

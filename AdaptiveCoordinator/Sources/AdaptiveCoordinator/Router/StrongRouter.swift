@@ -9,18 +9,18 @@ import UIKit
 
 public final class StrongRouter<RouteType: Route> {
   private var _viewController: UIViewController
-  private var _navigate: (RouteType) -> Void
+  private var _transfer: (RouteType) -> Void
   
   init<RouterType: Router>(_ router: RouterType) where RouteType == RouterType.RouteType {
     _viewController = router.viewController
-    _navigate = router.navigate(to:)
+    _transfer = router.transfer(to:)
   }
   
   public var viewController: UIViewController {
     _viewController
   }
   
-  public func navigate(to route: RouteType) {
-    _navigate(route)
+  public func transfer(to route: RouteType) {
+    _transfer(route)
   }
 }

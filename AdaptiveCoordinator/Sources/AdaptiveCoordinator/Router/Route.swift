@@ -7,5 +7,9 @@
 
 import Foundation
 
-/// Enum type
+///
+/// The protocol your routes should confirm to.
+/// 
+/// - It should be enum type.
+///
 public protocol Route {}
