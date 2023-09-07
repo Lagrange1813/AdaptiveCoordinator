@@ -7,10 +7,14 @@
 
 import SwiftUI
 import UIKit
+import AdaptiveCoordinator
 
 class SettingsViewController: UIHostingController<SettingsView> {
-  init() {
-    super.init(rootView: SettingsView())
+  let router: UnownedRouter<SettingsRoute>
+  
+  init(_ router: UnownedRouter<SettingsRoute>) {
+    self.router = router
+    super.init(rootView: SettingsView(router: router))
     title = "Settings"
   }
 
@@ -21,20 +25,38 @@ class SettingsViewController: UIHostingController<SettingsView> {
 }
 
 struct SettingsView: View {
+  let router: UnownedRouter<SettingsRoute>
+  
   var body: some View {
     List {
       Section(header: Text("General")) {
-        Button {} label: {
+        Button {
+          router.transfer(to: .general)
+        } label: {
           Label("General", systemImage: "gear")
         }
       }
 
       Section(header: Text("About")) {
-        Button {} label: {
+        Button {
+          router.transfer(to: .about)
+        } label: {
           Label("About", systemImage: "info.circle")
         }
       }
     }
     .listStyle(InsetGroupedListStyle())
+  }
+}
+
+struct GeneralView: View {
+  var body: some View {
+    Text("General")
+  }
+}
+
+struct AboutView: View {
+  var body: some View {
+    Text("About")
   }
 }

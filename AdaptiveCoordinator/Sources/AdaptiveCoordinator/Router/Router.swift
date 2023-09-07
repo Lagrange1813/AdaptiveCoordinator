@@ -7,13 +7,7 @@
 
 import UIKit
 
-public protocol Router: Presentable {
+public protocol Router {
   associatedtype RouteType: Route
   func transfer(to route: RouteType)
-}
-
-extension Router {
-  public var strongRouter: StrongRouter<RouteType> {
-    StrongRouter(self)
-  }
 }

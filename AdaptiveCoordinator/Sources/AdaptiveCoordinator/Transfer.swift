@@ -11,8 +11,10 @@ import UIKit
 /// The type of transfer when the navigation controller transfers the view controller.
 ///
 public enum TransferType {
-  case none
   case push(UIViewController)
+  case pop
+  case popToRoot
+  case none
 }
 
 //public struct Transfer {

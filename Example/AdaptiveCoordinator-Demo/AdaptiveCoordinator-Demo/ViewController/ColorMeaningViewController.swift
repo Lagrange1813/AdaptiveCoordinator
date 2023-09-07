@@ -1,24 +1,23 @@
 //
-//  ColorViewController.swift
+//  ColorMeaningViewController.swift
 //  AdaptiveCoordinator-Demo
 //
-//  Created by Lagrange1813 on 2023/9/3.
+//  Created by Lagrange1813 on 2023/9/6.
 //
 
 import UIKit
 import AdaptiveCoordinator
 
-class ColorViewController: UIViewController {
+class ColorMeaningViewController: UIViewController {
   let router: UnownedRouter<ColorRoute>
-  let color: String
+  let meaning: String
   
-  init(router: UnownedRouter<ColorRoute>, color: String) {
+  init(router: UnownedRouter<ColorRoute>, meaning: String) {
     self.router = router
-    self.color = color
+    self.meaning = meaning
     super.init(nibName: nil, bundle: nil)
   }
   
-  @available(*, unavailable)
   required init?(coder: NSCoder) {
     fatalError("init(coder:) has not been implemented")
   }
@@ -36,12 +35,20 @@ class ColorViewController: UIViewController {
   func configure() {
     view.backgroundColor = .white
     
-    title = color
+    let label = UILabel()
+    label.text = meaning
+    label.textColor = .label
+    view.addSubview(label)
+    label.translatesAutoresizingMaskIntoConstraints = false
+    NSLayoutConstraint.activate([
+      label.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+      label.centerYAnchor.constraint(equalTo: view.centerYAnchor, constant: -100),
+    ])
     
     let button = UIButton()
-    button.setTitle("Meaning", for: .normal)
+    button.setTitle("Back", for: .normal)
     button.setTitleColor(.systemBlue, for: .normal)
-    button.addTarget(self, action: #selector(meaningButtonDidTap), for: .touchUpInside)
+    button.addTarget(self, action: #selector(backButtonDidTap), for: .touchUpInside)
     view.addSubview(button)
     button.translatesAutoresizingMaskIntoConstraints = false
     NSLayoutConstraint.activate([
@@ -51,10 +58,10 @@ class ColorViewController: UIViewController {
   }
   
   func configureNavigationBar() {
-    navigationController?.setNavigationBarHidden(false, animated: true)
+    navigationController?.setNavigationBarHidden(true, animated: true)
   }
   
-  @objc func meaningButtonDidTap() {
-    router.transfer(to: .meaning(color + " Meaning"))
+  @objc func backButtonDidTap() {
+    router.transfer(to: .root)
   }
 }

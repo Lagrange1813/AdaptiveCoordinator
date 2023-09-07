@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		203E00DC2AA88A2600E91F09 /* SettingsCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 203E00DB2AA88A2600E91F09 /* SettingsCoordinator.swift */; };
 		203ECC362AA3609600DA7A6D /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 203ECC352AA3609600DA7A6D /* AppDelegate.swift */; };
 		203ECC382AA3609600DA7A6D /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 203ECC372AA3609600DA7A6D /* SceneDelegate.swift */; };
 		203ECC3A2AA3609600DA7A6D /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 203ECC392AA3609600DA7A6D /* ViewController.swift */; };
@@ -18,9 +19,11 @@
 		203ECC532AA361FE00DA7A6D /* SettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 203ECC522AA361FE00DA7A6D /* SettingsViewController.swift */; };
 		203ECC552AA4882100DA7A6D /* ColorCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 203ECC542AA4882100DA7A6D /* ColorCoordinator.swift */; };
 		203ECC572AA488F700DA7A6D /* ColorViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 203ECC562AA488F700DA7A6D /* ColorViewController.swift */; };
+		203ECC5B2AA84E7400DA7A6D /* ColorMeaningViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 203ECC5A2AA84E7400DA7A6D /* ColorMeaningViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		203E00DB2AA88A2600E91F09 /* SettingsCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsCoordinator.swift; sourceTree = "<group>"; };
 		203ECC322AA3609600DA7A6D /* AdaptiveCoordinator-Demo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "AdaptiveCoordinator-Demo.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		203ECC352AA3609600DA7A6D /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		203ECC372AA3609600DA7A6D /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -33,6 +36,7 @@
 		203ECC522AA361FE00DA7A6D /* SettingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewController.swift; sourceTree = "<group>"; };
 		203ECC542AA4882100DA7A6D /* ColorCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorCoordinator.swift; sourceTree = "<group>"; };
 		203ECC562AA488F700DA7A6D /* ColorViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorViewController.swift; sourceTree = "<group>"; };
+		203ECC5A2AA84E7400DA7A6D /* ColorMeaningViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorMeaningViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -83,6 +87,7 @@
 			children = (
 				203ECC4D2AA361CF00DA7A6D /* ColorListCoordinator.swift */,
 				203ECC542AA4882100DA7A6D /* ColorCoordinator.swift */,
+				203E00DB2AA88A2600E91F09 /* SettingsCoordinator.swift */,
 			);
 			path = Coordinator;
 			sourceTree = "<group>";
@@ -93,6 +98,7 @@
 				203ECC502AA361F000DA7A6D /* ColorListViewController.swift */,
 				203ECC522AA361FE00DA7A6D /* SettingsViewController.swift */,
 				203ECC562AA488F700DA7A6D /* ColorViewController.swift */,
+				203ECC5A2AA84E7400DA7A6D /* ColorMeaningViewController.swift */,
 			);
 			path = ViewController;
 			sourceTree = "<group>";
@@ -178,6 +184,8 @@
 				203ECC572AA488F700DA7A6D /* ColorViewController.swift in Sources */,
 				203ECC4E2AA361CF00DA7A6D /* ColorListCoordinator.swift in Sources */,
 				203ECC3A2AA3609600DA7A6D /* ViewController.swift in Sources */,
+				203E00DC2AA88A2600E91F09 /* SettingsCoordinator.swift in Sources */,
+				203ECC5B2AA84E7400DA7A6D /* ColorMeaningViewController.swift in Sources */,
 				203ECC362AA3609600DA7A6D /* AppDelegate.swift in Sources */,
 				203ECC382AA3609600DA7A6D /* SceneDelegate.swift in Sources */,
 				203ECC532AA361FE00DA7A6D /* SettingsViewController.swift in Sources */,

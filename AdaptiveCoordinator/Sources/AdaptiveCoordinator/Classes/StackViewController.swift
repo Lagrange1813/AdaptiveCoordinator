@@ -9,7 +9,13 @@ import Combine
 import UIKit
 
 public class StackViewController: UINavigationController {
+  public var didPushViewController = PassthroughSubject<Void, Never>()
   public var didPopViewController = PassthroughSubject<UIViewController, Never>()
+  
+  public override func pushViewController(_ viewController: UIViewController, animated: Bool) {
+    super.pushViewController(viewController, animated: animated)
+    didPushViewController.send()
+  }
 
   @discardableResult
   override public func popViewController(animated: Bool) -> UIViewController? {

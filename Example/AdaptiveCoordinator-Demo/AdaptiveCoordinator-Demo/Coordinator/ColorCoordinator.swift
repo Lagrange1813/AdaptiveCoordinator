@@ -12,23 +12,22 @@ enum ColorRoute: Route {
   case color(String)
   case meaning(String)
   case colors
+  case root
 }
 
 class ColorCoordinator: StackCoordinator<ColorRoute> {
-  deinit {
-    print("ColorCoordinator - Deinit")
-  }
-  
   override func prepare(to route: ColorRoute) -> TransferType {
     switch route {
     case .color(let str):
-      let viewController = ColorViewController(color: str)
+      let viewController = ColorViewController(router: unownedRouter, color: str)
       return .push(viewController)
     case .meaning(let str):
-      print(str)
-      return .none
+      let viewController = ColorMeaningViewController(router: unownedRouter, meaning: str)
+      return .push(viewController)
     case .colors:
-      return .none
+      return .pop
+    case .root:
+      return .popToRoot
     }
   }
 }

@@ -9,12 +9,12 @@ import AdaptiveCoordinator
 import UIKit
 
 class ColorListViewController: UIViewController {
-  let router: StrongRouter<ColorListRoute>
+  let router: UnownedRouter<ColorListRoute>
   
   let colors = ["Red", "Orange", "Yellow", "Green", "Blue", "Indigo", "Violet"]
   lazy var tableView = UITableView()
   
-  init(_ router: StrongRouter<ColorListRoute>) {
+  init(_ router: UnownedRouter<ColorListRoute>) {
     self.router = router
     super.init(nibName: nil, bundle: nil)
   }

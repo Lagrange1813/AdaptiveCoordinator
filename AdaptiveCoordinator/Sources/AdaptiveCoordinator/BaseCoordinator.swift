@@ -11,7 +11,7 @@ open class BaseCoordinator<RouteType: Route, BasicViewControllerType: UIViewCont
   public typealias BasicViewControllerType = BasicViewControllerType
   
   private(set) public var basicViewController: BasicViewControllerType
-  public var children = [Presentable]()
+  public var children = [any Presentable]()
   
   public var numOfChildren: Int {
     children.count
@@ -43,5 +43,15 @@ open class BaseCoordinator<RouteType: Route, BasicViewControllerType: UIViewCont
   
   final public func removeChild(_ presentable: Presentable) {
     children.removeAll { $0.viewController === presentable.viewController }
+  }
+}
+
+extension Coordinator {
+  public var strongRouter: StrongRouter<RouteType> {
+    StrongRouter(self)
+  }
+  
+  public var unownedRouter: UnownedRouter<RouteType> {
+    UnownedRouter(self, erase: { $0.strongRouter })
   }
 }

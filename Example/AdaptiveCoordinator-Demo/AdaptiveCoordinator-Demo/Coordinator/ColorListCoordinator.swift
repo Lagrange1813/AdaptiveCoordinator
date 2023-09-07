@@ -17,17 +17,35 @@ enum ColorListRoute: Route {
 }
 
 class ColorListCoordinator: StackCoordinator<ColorListRoute> {
+  override init(basicViewController: StackCoordinator<ColorListRoute>.BasicViewControllerType = .init(), initialType: ColorListRoute) {
+    super.init(basicViewController: basicViewController, initialType: initialType)
+    rootRoute = { .list }
+    
+    basicViewController.didPushViewController
+      .sink { [unowned self] in
+        print(dump() + "\n")
+      }
+      .store(in: &cancellables)
+    
+    basicViewController.didPopViewController
+      .sink { [unowned self] _ in
+        print(dump() + "\n")
+      }
+      .store(in: &cancellables)
+  }
+  
   override func prepare(to route: ColorListRoute) -> TransferType {
+    super.prepare(to: route)
     switch route {
     case .list:
-      let viewController = ColorListViewController(strongRouter)
+      let viewController = ColorListViewController(unownedRouter)
       return .push(viewController)
     case .color(let str):
       addChild(ColorCoordinator(basicViewController: basicViewController, initialType: .color(str)))
       return .none
     case .settings:
-      let viewController = SettingsViewController()
-      return .push(viewController)
+      addChild(SettingsCoordinator(basicViewController: basicViewController, initialType: .list))
+      return .none
     }
   }
 }

@@ -7,7 +7,7 @@
 
 import UIKit
 
-public protocol Presentable: AnyObject {
+public protocol Presentable: AnyObject, Dumpable {
   var viewController: UIViewController { get }
   var presenter: (any Coordinator)? { get set }
 }
