@@ -27,7 +27,7 @@ class ColorCoordinator: StackCoordinator<ColorRoute> {
     case .colors:
       return .pop
     case .root:
-      return .popToRoot
+      return .backToRoot
     }
   }
 }

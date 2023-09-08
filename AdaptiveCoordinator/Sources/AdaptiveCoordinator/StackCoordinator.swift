@@ -10,11 +10,12 @@ import UIKit
 
 open class StackCoordinator<RouteType: Route>: BaseCoordinator<RouteType, StackViewController> {
   @Published public private(set) var currentRoute: RouteType
+  private var isPresenting: Bool = false
   public var cancellables = Set<AnyCancellable>()
   
   public var rootRoute: (() -> RouteType)?
 
-  override public init(basicViewController: BasicViewControllerType = .init(), initialType: RouteType) {
+  public override init(basicViewController: BasicViewControllerType = .init(), initialType: RouteType) {
     currentRoute = initialType
     super.init(basicViewController: basicViewController, initialType: initialType)
     bindEvents()
@@ -22,7 +23,7 @@ open class StackCoordinator<RouteType: Route>: BaseCoordinator<RouteType, StackV
   
   func bindEvents() {
     basicViewController
-      .didPopViewController
+      .didRemoveViewController
       .sink { [unowned self] viewController in
         let idx = children.firstIndex { shouldRemove(child: $0, with: viewController) }
         if let idx {
@@ -55,13 +56,24 @@ open class StackCoordinator<RouteType: Route>: BaseCoordinator<RouteType, StackV
   override public func perform(_ transfer: TransferType) {
     switch transfer {
     case .push(let viewController):
-      addChild(viewController)
       basicViewController.push(viewController)
+      addChild(viewController)
     case .pop:
       basicViewController.pop()
-    case .popToRoot:
-      if numOfChildren > 1 {
-        basicViewController.pop()
+    case .present(let viewController):
+      basicViewController.present(viewController)
+      addChild(viewController)
+      isPresenting = true
+    case .dimiss:
+      basicViewController.dismiss()
+      isPresenting = false
+    case .backToRoot:
+      if isPresenting {
+        perform(.dimiss)
+      } else {
+        if numOfChildren > 1 {
+          perform(.pop)
+        }
       }
     case .none:
       break

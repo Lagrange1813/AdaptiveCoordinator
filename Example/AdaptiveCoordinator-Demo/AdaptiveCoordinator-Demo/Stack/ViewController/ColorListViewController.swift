@@ -33,6 +33,11 @@ class ColorListViewController: UIViewController {
     view.backgroundColor = .white
     title = "Palette"
     
+    let infoButton = UIBarButtonItem(title: "Info", primaryAction: UIAction { [unowned self] _ in
+      router.transfer(to: .info)
+    })
+    navigationItem.leftBarButtonItem = infoButton
+    
     let settingsButton = UIBarButtonItem(title: "Settings", primaryAction: UIAction { [unowned self] _ in
       router.transfer(to: .settings)
     })

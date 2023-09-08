@@ -5,7 +5,7 @@ import PackageDescription
 let package = Package(
   name: "AdaptiveCoordinator",
   platforms: [
-    .iOS(.v13),
+    .iOS(.v14),
     .macOS(.v12),
     .visionOS(.v1),
   ],

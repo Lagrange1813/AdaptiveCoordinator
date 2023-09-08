@@ -14,6 +14,8 @@ enum ColorListRoute: Route {
   case list
   case color(String)
   case settings
+  case info
+  case root
 }
 
 class ColorListCoordinator: StackCoordinator<ColorListRoute> {
@@ -21,13 +23,13 @@ class ColorListCoordinator: StackCoordinator<ColorListRoute> {
     super.init(basicViewController: basicViewController, initialType: initialType)
     rootRoute = { .list }
     
-    basicViewController.didPushViewController
+    basicViewController.didAddViewController
       .sink { [unowned self] in
         print(dump() + "\n")
       }
       .store(in: &cancellables)
     
-    basicViewController.didPopViewController
+    basicViewController.didRemoveViewController
       .sink { [unowned self] _ in
         print(dump() + "\n")
       }
@@ -46,6 +48,11 @@ class ColorListCoordinator: StackCoordinator<ColorListRoute> {
     case .settings:
       addChild(SettingsCoordinator(basicViewController: basicViewController, initialType: .list))
       return .none
+    case .info:
+      let viewController = InfoViewController(unownedRouter)
+      return .present(viewController)
+    case .root:
+      return .backToRoot
     }
   }
 }
