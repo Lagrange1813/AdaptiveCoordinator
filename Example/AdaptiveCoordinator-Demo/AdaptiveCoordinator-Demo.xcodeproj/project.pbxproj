@@ -25,6 +25,7 @@
 		20C76C5B2AAAC8AA00D081BF /* NewsListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20C76C5A2AAAC8AA00D081BF /* NewsListViewController.swift */; };
 		20C76C5D2AAAC8BD00D081BF /* NewsDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20C76C5C2AAAC8BD00D081BF /* NewsDetailViewController.swift */; };
 		20C76C5F2AAAC93600D081BF /* NewsDayListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20C76C5E2AAAC93600D081BF /* NewsDayListViewController.swift */; };
+		20C76C612AAC982200D081BF /* NewsInfoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20C76C602AAC982200D081BF /* NewsInfoViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -47,6 +48,7 @@
 		20C76C5A2AAAC8AA00D081BF /* NewsListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewsListViewController.swift; sourceTree = "<group>"; };
 		20C76C5C2AAAC8BD00D081BF /* NewsDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewsDetailViewController.swift; sourceTree = "<group>"; };
 		20C76C5E2AAAC93600D081BF /* NewsDayListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewsDayListViewController.swift; sourceTree = "<group>"; };
+		20C76C602AAC982200D081BF /* NewsInfoViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewsInfoViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -146,6 +148,7 @@
 				20C76C5A2AAAC8AA00D081BF /* NewsListViewController.swift */,
 				20C76C5C2AAAC8BD00D081BF /* NewsDetailViewController.swift */,
 				20C76C5E2AAAC93600D081BF /* NewsDayListViewController.swift */,
+				20C76C602AAC982200D081BF /* NewsInfoViewController.swift */,
 			);
 			path = ViewController;
 			sourceTree = "<group>";
@@ -241,6 +244,7 @@
 				203ECC382AA3609600DA7A6D /* SceneDelegate.swift in Sources */,
 				203ECC532AA361FE00DA7A6D /* SettingsViewController.swift in Sources */,
 				20C76C5B2AAAC8AA00D081BF /* NewsListViewController.swift in Sources */,
+				20C76C612AAC982200D081BF /* NewsInfoViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

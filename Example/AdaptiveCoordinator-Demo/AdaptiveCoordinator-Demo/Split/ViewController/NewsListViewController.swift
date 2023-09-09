@@ -7,7 +7,48 @@
 
 import UIKit
 import AdaptiveCoordinator
+import SwiftUI
 
-class NewsListViewController: UIViewController {
+class NewsListViewController: UIHostingController<NewsList> {
+  let router: UnownedRouter<NewsRoute>
   
+  init(_ router: UnownedRouter<NewsRoute>) {
+    self.router = router
+    super.init(rootView: NewsList(router: router))
+    configure()
+  }
+
+  func configure() {
+    title = "News"
+  }
+  
+  @MainActor required dynamic init?(coder aDecoder: NSCoder) {
+    fatalError("init(coder:) has not been implemented")
+  }
+}
+
+struct NewsList: View {
+  let router: UnownedRouter<NewsRoute>
+  
+  var body: some View {
+    List {
+      ForEach(0..<10) { index in
+        Button{
+          router.transfer(to: .news("News \(index)"))
+        } label: {
+          Text("News \(index)")
+            .foregroundStyle(.black)
+        }
+      }
+    }
+    .toolbar {
+      ToolbarItem(placement: .navigationBarTrailing) {
+        Button {
+          router.transfer(to: .info)
+        } label: {
+          Image(systemName: "info.circle")
+        }
+      }
+    }
+  }
 }

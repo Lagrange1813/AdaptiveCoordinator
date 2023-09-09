@@ -8,7 +8,7 @@
 import Combine
 import UIKit
 
-open class StackCoordinator<RouteType: Route>: BaseCoordinator<RouteType, StackViewController> {
+open class StackCoordinator<RouteType: Route>: BaseCoordinator<RouteType, StackViewController, StackTransfer> {
   @Published public private(set) var currentRoute: RouteType
   private var isPresenting: Bool = false
   public var cancellables = Set<AnyCancellable>()
@@ -48,12 +48,12 @@ open class StackCoordinator<RouteType: Route>: BaseCoordinator<RouteType, StackV
   }
 
   @discardableResult
-  override open func prepare(to route: RouteType) -> TransferType {
+  override open func prepare(to route: RouteType) -> StackTransfer {
     currentRoute = route
     return .none
   }
 
-  override public func perform(_ transfer: TransferType) {
+  override public func perform(_ transfer: StackTransfer) {
     switch transfer {
     case .push(let viewController):
       basicViewController.push(viewController)

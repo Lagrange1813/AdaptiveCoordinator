@@ -6,12 +6,13 @@
 //
 
 import UIKit
-import SwiftUI
+
+public protocol Transfer {}
 
 ///
 /// The type of transfer when the navigation controller transfers the view controller.
 ///
-public enum TransferType {
+public enum StackTransfer: Transfer {
   case push(UIViewController)
   case pop
   case present(UIViewController)
@@ -20,7 +21,33 @@ public enum TransferType {
   case none
 }
 
-public enum TargetType {
-  case viewController(UIViewController)
-  case view(any View)
+public enum SplitTransfer: Transfer {
+  public enum TransferType {
+    case push(UIViewController, Bool)
+    case pop
+    case set(UIViewController)
+    case backToRoot
+  }
+  
+  case primary(TransferType)
+  case secondary(TransferType)
+  case supplmentary(TransferType)
+  case present(UIViewController)
+  case dimiss
+  case none
 }
+
+//public protocol _Transfer {}
+//
+//public struct _SplitTransferInfo: _Transfer {
+//  enum _SplitTransferType {
+//    case primary
+//    case secondary
+//    case supplmentary
+//    case none
+//  }
+//  
+//  let type: _SplitTransferType
+//  let viewController: UIViewController? = nil
+//  let animated: Bool = true
+//}

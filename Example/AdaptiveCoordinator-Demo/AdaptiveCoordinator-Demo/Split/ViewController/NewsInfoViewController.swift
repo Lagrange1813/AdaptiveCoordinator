@@ -1,13 +1,13 @@
 //
-//  NewsDayListViewController.swift
+//  NewsInfoViewController.swift
 //  AdaptiveCoordinator-Demo
 //
-//  Created by Lagrange1813 on 2023/9/8.
+//  Created by Lagrange1813 on 2023/9/9.
 //
 
 import UIKit
 
-class NewsDayListViewController: UIViewController {
+class NewsInfoViewController: UIViewController {
   init() {
     super.init(nibName: nil, bundle: nil)
     configure()
@@ -18,8 +18,6 @@ class NewsDayListViewController: UIViewController {
   }
   
   func configure() {
-    view.backgroundColor = .white
-    
-    title = ""
+    view.backgroundColor = .systemRed
   }
 }

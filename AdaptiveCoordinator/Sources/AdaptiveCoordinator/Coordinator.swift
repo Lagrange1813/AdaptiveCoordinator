@@ -8,7 +8,8 @@
 import UIKit
 
 public protocol Coordinator: Presentable, Router {
-  associatedtype BasicViewControllerType
+  associatedtype BasicViewControllerType: UIViewController
+  associatedtype TransferType: Transfer
   
   var basicViewController: BasicViewControllerType { get }
   var children: [any Presentable] { get set }

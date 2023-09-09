@@ -7,8 +7,9 @@
 
 import UIKit
 
-open class BaseCoordinator<RouteType: Route, BasicViewControllerType: UIViewController>: Coordinator {
+open class BaseCoordinator<RouteType: Route, BasicViewControllerType: UIViewController, TransferType: Transfer>: Coordinator {
   public typealias BasicViewControllerType = BasicViewControllerType
+  public typealias TransferType = TransferType
   
   private(set) public var basicViewController: BasicViewControllerType
   public var children = [any Presentable]()
