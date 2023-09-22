@@ -13,13 +13,23 @@ open class StackCoordinator<RouteType: Route>: BaseCoordinator<RouteType, StackV
   private var isPresenting: Bool = false
   public var cancellables = Set<AnyCancellable>()
   
-  public var rootRoute: (() -> RouteType)?
+  public var rootRoute: RouteType
+  
+//  public var user: User?
 
-  public override init(basicViewController: BasicViewControllerType = .init(), initialType: RouteType) {
-    currentRoute = initialType
-    super.init(basicViewController: basicViewController, initialType: initialType)
+  public init(basicViewController: BasicViewControllerType = .init(), initialRoute: RouteType, rootRoute: RouteType? = nil) {
+    currentRoute = initialRoute
+    self.rootRoute = rootRoute ?? initialRoute
+    super.init(basicViewController: basicViewController, initialRoute: initialRoute)
     bindEvents()
   }
+  
+//  public init(initialRoute: RouteType, user: User) where User.RouteType == RouteType, User.TransferType == StackTransfer {
+//    self.currentRoute = initialRoute
+//    self.rootRoute = initialRoute
+//    self.user = user
+//    super.init(basicViewController: BasicViewControllerType(), initialRoute: initialRoute)
+//  }
   
   func bindEvents() {
     basicViewController
@@ -28,9 +38,7 @@ open class StackCoordinator<RouteType: Route>: BaseCoordinator<RouteType, StackV
         let idx = children.firstIndex { shouldRemove(child: $0, with: viewController) }
         if let idx {
           children.remove(at: idx)
-          if let rootRoute {
-            currentRoute = rootRoute()
-          }
+          currentRoute = rootRoute
         }
       }
       .store(in: &cancellables)

@@ -18,6 +18,9 @@ public class InternalStackViewController: StackViewController {
 }
 
 public class SplitViewController: UISplitViewController {
+//  public var didAddViewController = PassthroughSubject<Void, Never>()
+//  public var didRemoveViewController = PassthroughSubject<UIViewController, Never>()
+  
   public var didAddViewController = PassthroughSubject<Void, Never>()
   public var didRemoveViewController = PassthroughSubject<UIViewController, Never>()
   

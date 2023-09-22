@@ -19,9 +19,8 @@ enum ColorListRoute: Route {
 }
 
 class ColorListCoordinator: StackCoordinator<ColorListRoute> {
-  override init(basicViewController: StackCoordinator<ColorListRoute>.BasicViewControllerType = .init(), initialType: ColorListRoute) {
-    super.init(basicViewController: basicViewController, initialType: initialType)
-    rootRoute = { .list }
+  init(basicViewController: StackCoordinator<ColorListRoute>.BasicViewControllerType = .init(), initialRoute: ColorListRoute) {
+    super.init(basicViewController: basicViewController, initialRoute: initialRoute)
     
     basicViewController.didAddViewController
       .sink { [unowned self] in
@@ -43,10 +42,10 @@ class ColorListCoordinator: StackCoordinator<ColorListRoute> {
       let viewController = ColorListViewController(unownedRouter)
       return .push(viewController)
     case .color(let str):
-      addChild(ColorCoordinator(basicViewController: basicViewController, initialType: .color(str)))
+      addChild(ColorCoordinator(basicViewController: basicViewController, initialRoute: .color(str)))
       return .none
     case .settings:
-      addChild(SettingsCoordinator(basicViewController: basicViewController, initialType: .list))
+      addChild(SettingsCoordinator(basicViewController: basicViewController, initialRoute: .list))
       return .none
     case .info:
       let viewController = InfoViewController(unownedRouter)

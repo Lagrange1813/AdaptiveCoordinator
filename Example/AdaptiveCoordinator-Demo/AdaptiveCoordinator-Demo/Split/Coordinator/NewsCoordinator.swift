@@ -16,11 +16,11 @@ enum NewsRoute: Route {
 }
 
 class NewsCoordinator: SplitCoordinator<NewsRoute> {
-  init(basicViewController: SplitCoordinator<NewsRoute>.BasicViewControllerType = .init(), initialType: NewsRoute) {
+  init(basicViewController: SplitCoordinator<NewsRoute>.BasicViewControllerType = .init(), initialRoute: NewsRoute) {
     super.init(basicViewController: basicViewController, configure: { svc in
       svc.preferredSplitBehavior = .tile
       svc.preferredDisplayMode = .oneBesideSecondary
-    }, initialType: initialType)
+    }, initialRoute: initialRoute)
   }
   
   override func prepare(to route: NewsRoute) -> SplitTransfer {

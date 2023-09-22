@@ -9,8 +9,8 @@ import Combine
 import UIKit
 
 open class SplitCoordinator<RouteType: Route>: BaseCoordinator<RouteType, SplitViewController, SplitTransfer> {
-  public init(basicViewController: BasicViewControllerType = .init(), configure: ((BasicViewControllerType) -> Void)? = nil, initialType: RouteType) {
-    super.init(basicViewController: basicViewController, initialType: initialType)
+  public init(basicViewController: BasicViewControllerType = .init(), configure: ((BasicViewControllerType) -> Void)? = nil, initialRoute: RouteType) {
+    super.init(basicViewController: basicViewController, initialRoute: initialRoute)
     configure?(basicViewController)
   }
   
@@ -39,6 +39,7 @@ open class SplitCoordinator<RouteType: Route>: BaseCoordinator<RouteType, SplitV
       handle(type: transferType, in: targetStack(of: transfer))
     case let .present(viewController):
       basicViewController.present(viewController)
+      addChild(viewController)
     case .dimiss:
       break
     case .none:
@@ -50,10 +51,12 @@ open class SplitCoordinator<RouteType: Route>: BaseCoordinator<RouteType, SplitV
     switch type {
     case let .push(viewController, animated):
       stack?.push(viewController, animated: animated)
+      addChild(viewController)
     case .pop:
       stack?.pop()
     case let .set(viewController):
       stack?.set(viewController)
+      addChild(viewController)
     case .backToRoot:
       break
     }
