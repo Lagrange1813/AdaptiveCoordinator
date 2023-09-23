@@ -18,7 +18,7 @@ public protocol Coordinator: Presentable, Router {
   var children: [any Presentable] { get set }
   var numOfChildren: Int { get }
   
-  func prepare(to route: RouteType) -> TransferType
+  func _prepare(to route: RouteType) -> TransferType
   func perform(_ transfer: TransferType)
   
   func addChild(_ presentable: any Presentable)
@@ -51,7 +51,7 @@ extension Coordinator {
 // MARK: - Router
 extension Coordinator {
   public func transfer(to route: RouteType) {
-    perform(prepare(to: route))
+    perform(_prepare(to: route))
   }
 }
 

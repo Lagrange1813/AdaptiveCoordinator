@@ -11,7 +11,7 @@ open class BaseCoordinator<RouteType: Route, BasicViewControllerType: UIViewCont
   public typealias BasicViewControllerType = BasicViewControllerType
   public typealias TransferType = TransferType
   
-  public weak var presenter: (any Coordinator)?
+  weak public var presenter: (any Coordinator)?
   
   private(set) public var basicViewController: BasicViewControllerType
   public var children = [any Presentable]()
@@ -21,11 +21,22 @@ open class BaseCoordinator<RouteType: Route, BasicViewControllerType: UIViewCont
     transfer(to: initialRoute)
   }
   
-  open func prepare(to route: RouteType) -> TransferType {
-    fatalError("Please override the \(#function) method.")
+  public func _prepare(to route: RouteType) -> TransferType {
+    fatalError()
   }
   
   public func perform(_ transfer: TransferType) {
-    fatalError("Please override the \(#function) method.")
+    fatalError()
+  }
+  
+  func shouldRemove(child: any Presentable, with viewController: UIViewController) -> Bool {
+    child === viewController || (
+      child === viewController.presenter && (
+        viewController.presenter?.numOfChildren == .some(0) || (
+          viewController.presenter?.numOfChildren == .some(1) &&
+            viewController === viewController.presenter?.children[0]
+        )
+      )
+    )
   }
 }

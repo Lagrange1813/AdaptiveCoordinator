@@ -6,9 +6,13 @@
 //
 
 import UIKit
+import AdaptiveCoordinator
 
 class NewsInfoViewController: UIViewController {
-  init() {
+  let router: UnownedRouter<NewsRoute>
+  
+  init(_ router: UnownedRouter<NewsRoute>) {
+    self.router = router
     super.init(nibName: nil, bundle: nil)
     configure()
   }
@@ -19,5 +23,20 @@ class NewsInfoViewController: UIViewController {
   
   func configure() {
     view.backgroundColor = .systemRed
+    
+    let button = UIButton()
+    button.setTitle("Back", for: .normal)
+    button.setTitleColor(.systemBlue, for: .normal)
+    button.addTarget(self, action: #selector(backButtonDidTap), for: .touchUpInside)
+    view.addSubview(button)
+    button.translatesAutoresizingMaskIntoConstraints = false
+    NSLayoutConstraint.activate([
+      button.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+      button.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+    ])
+  }
+  
+  @objc func backButtonDidTap() {
+    router.transfer(to: .root)
   }
 }

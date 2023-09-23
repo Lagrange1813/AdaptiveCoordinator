@@ -13,27 +13,27 @@ public protocol Transfer {}
 /// The type of transfer when the navigation controller transfers the view controller.
 ///
 public enum StackTransfer: Transfer {
-  case push(UIViewController)
-  case pop
-  case present(UIViewController)
-  case dimiss
-  case backToRoot
+  case push(UIViewController, Bool = true)
+  case pop(Bool = true)
+  case present(UIViewController, Bool = true)
+  case dimiss(Bool = true)
+  case backToRoot(Bool = true)
   case none
 }
 
 public enum SplitTransfer: Transfer {
   public enum TransferType {
-    case push(UIViewController, Bool)
-    case pop
+    case push(UIViewController, Bool = true)
+    case pop(Bool = true)
     case set(UIViewController)
-    case backToRoot
+    case backToRoot(Bool = true)
   }
   
   case primary(TransferType)
   case secondary(TransferType)
   case supplmentary(TransferType)
-  case present(UIViewController)
-  case dimiss
+  case present(UIViewController, Bool = true)
+  case dimiss(Bool = true)
   case none
 }
 

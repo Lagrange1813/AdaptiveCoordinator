@@ -13,6 +13,7 @@ enum NewsRoute: Route {
   case day
   case news(String)
   case info
+  case root
 }
 
 class NewsCoordinator: SplitCoordinator<NewsRoute> {
@@ -21,6 +22,18 @@ class NewsCoordinator: SplitCoordinator<NewsRoute> {
       svc.preferredSplitBehavior = .tile
       svc.preferredDisplayMode = .oneBesideSecondary
     }, initialRoute: initialRoute)
+    
+    basicViewController.didAddViewController
+      .sink { [unowned self] in
+        print(dump() + "\n")
+      }
+      .store(in: &cancellables)
+    
+    basicViewController.didRemoveViewController
+      .sink { [unowned self] _ in
+        print(dump() + "\n")
+      }
+      .store(in: &cancellables)
   }
   
   override func prepare(to route: NewsRoute) -> SplitTransfer {
@@ -34,8 +47,10 @@ class NewsCoordinator: SplitCoordinator<NewsRoute> {
       let viewController = NewsDetailViewController(str)
       return .secondary(.set(viewController))
     case .info:
-      let viewController = NewsInfoViewController()
+      let viewController = NewsInfoViewController(unownedRouter)
       return .present(viewController)
+    case .root:
+      return .dimiss()
     }
   }
 }

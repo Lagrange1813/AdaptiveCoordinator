@@ -9,8 +9,11 @@ import Combine
 import UIKit
 
 public class StackViewController: UINavigationController {
-  public var didAddViewController = PassthroughSubject<Void, Never>()
-  public var didRemoveViewController = PassthroughSubject<UIViewController, Never>()
+  var _didAddViewController = PassthroughSubject<Void, Never>()
+  var _didRemoveViewController = PassthroughSubject<[UIViewController], Never>()
+  
+  public lazy var didAddViewController = _didAddViewController.eraseToAnyPublisher()
+  public lazy var didRemoveViewController = _didRemoveViewController.eraseToAnyPublisher()
   
   ///
   /// The view controller that is being popped or dismissed.
@@ -35,7 +38,7 @@ public class StackViewController: UINavigationController {
     removingViewController = super.popViewController(animated: animated)
     executeAfterTransition(animated: animated) { [weak self] in
       if let viewController = self?.removingViewController {
-        self?.didRemoveViewController.send(viewController)
+        self?._didRemoveViewController.send([viewController])
         self?.removingViewController = nil
       }
     }
@@ -50,7 +53,7 @@ extension StackViewController: UIAdaptivePresentationControllerDelegate {
   
   public func presentationControllerDidDismiss(_ presentationController: UIPresentationController) {
     if let viewController = removingViewController {
-      didRemoveViewController.send(viewController)
+      _didRemoveViewController.send([viewController])
       removingViewController = nil
     }
   }
@@ -60,7 +63,7 @@ public extension StackViewController {
   func push(_ viewController: UIViewController, animated: Bool = true, completion: VoidHandler? = nil) {
     pushViewController(viewController, animated: animated)
     executeAfterTransition(animated: animated) { [weak self] in
-        self?.didAddViewController.send()
+        self?._didAddViewController.send()
         completion?()
     }
   }
@@ -72,7 +75,7 @@ public extension StackViewController {
   override func present(_ viewController: UIViewController, animated: Bool = true, completion: VoidHandler? = nil) {
     viewController.presentationController?.delegate = self
     super.present(viewController, animated: animated) { [weak self] in
-      self?.didAddViewController.send()
+      self?._didAddViewController.send()
       completion?()
     }
   }
@@ -81,7 +84,7 @@ public extension StackViewController {
     let viewController = visibleViewController
     super.dismiss(animated: animated) { [weak self] in
       if let viewController {
-        self?.didRemoveViewController.send(viewController)
+        self?._didRemoveViewController.send([viewController])
         completion?()
       }
     }

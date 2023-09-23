@@ -25,9 +25,9 @@ class ColorCoordinator: StackCoordinator<ColorRoute> {
       let viewController = ColorMeaningViewController(router: unownedRouter, meaning: str)
       return .push(viewController)
     case .colors:
-      return .pop
+      return .pop()
     case .root:
-      return .backToRoot
+      return .backToRoot()
     }
   }
 }

@@ -10,19 +10,24 @@ import Combine
 
 public class InternalStackViewController: StackViewController {
   func set(_ viewController: UIViewController, completion: VoidHandler? = nil) {
+    let removedViewControllers = viewControllers
     viewControllers = [viewController]
-    DispatchQueue.main.async {
+    DispatchQueue.main.async { [unowned self] in
+      if !removedViewControllers.isEmpty {
+        _didRemoveViewController.send(removedViewControllers)
+      }
+      _didAddViewController.send()
       completion?()
     }
   }
 }
 
 public class SplitViewController: UISplitViewController {
-//  public var didAddViewController = PassthroughSubject<Void, Never>()
-//  public var didRemoveViewController = PassthroughSubject<UIViewController, Never>()
+  private var _didAddViewController = PassthroughSubject<Void, Never>()
+  private var _didRemoveViewController = PassthroughSubject<[UIViewController], Never>()
   
-  public var didAddViewController = PassthroughSubject<Void, Never>()
-  public var didRemoveViewController = PassthroughSubject<UIViewController, Never>()
+  public lazy var didAddViewController = _didAddViewController.eraseToAnyPublisher()
+  public lazy var didRemoveViewController = _didRemoveViewController.eraseToAnyPublisher()
   
   lazy var primary = InternalStackViewController()
   lazy var secondary = InternalStackViewController()
@@ -30,9 +35,12 @@ public class SplitViewController: UISplitViewController {
   
   private var removingViewController: UIViewController?
   
+  public var cancellables = Set<AnyCancellable>()
+  
   public init() {
     super.init(style: .doubleColumn)
     configure()
+    addSubscriber()
   }
   
   required init?(coder: NSCoder) {
@@ -44,6 +52,32 @@ public class SplitViewController: UISplitViewController {
     setViewController(secondary, for: .secondary)
     setViewController(compact, for: .compact)
   }
+  
+  func addSubscriber() {
+    primary.didAddViewController
+      .sink { [unowned self] in
+        _didAddViewController.send()
+      }
+      .store(in: &cancellables)
+    
+    secondary.didAddViewController
+      .sink { [unowned self] in
+        _didAddViewController.send()
+      }
+      .store(in: &cancellables)
+    
+    primary.didRemoveViewController
+      .sink { [unowned self] in
+        _didRemoveViewController.send($0)
+      }
+      .store(in: &cancellables)
+    
+    secondary.didRemoveViewController
+      .sink { [unowned self] in
+        _didRemoveViewController.send($0)
+      }
+      .store(in: &cancellables)
+  }
 }
 
 extension SplitViewController: UIAdaptivePresentationControllerDelegate {
@@ -53,7 +87,7 @@ extension SplitViewController: UIAdaptivePresentationControllerDelegate {
   
   public func presentationControllerDidDismiss(_ presentationController: UIPresentationController) {
     if let viewController = removingViewController {
-      didRemoveViewController.send(viewController)
+      _didRemoveViewController.send([viewController])
       removingViewController = nil
     }
   }
@@ -63,7 +97,7 @@ extension SplitViewController {
   public override func present(_ viewController: UIViewController, animated: Bool = true, completion: VoidHandler? = nil) {
     viewController.presentationController?.delegate = self
     super.present(viewController, animated: animated) { [weak self] in
-      self?.didAddViewController.send()
+      self?._didAddViewController.send()
       completion?()
     }
   }
@@ -72,7 +106,7 @@ extension SplitViewController {
     let viewController = presentedViewController
     super.dismiss(animated: animated) { [weak self] in
       if let viewController {
-        self?.didRemoveViewController.send(viewController)
+        self?._didRemoveViewController.send([viewController])
         completion?()
       }
     }

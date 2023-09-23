@@ -10,79 +10,75 @@ import UIKit
 
 open class StackCoordinator<RouteType: Route>: BaseCoordinator<RouteType, StackViewController, StackTransfer> {
   @Published public private(set) var currentRoute: RouteType
+  public private(set) var rootRoute: RouteType
+  
   private var isPresenting: Bool = false
+ 
   public var cancellables = Set<AnyCancellable>()
-  
-  public var rootRoute: RouteType
-  
-//  public var user: User?
 
-  public init(basicViewController: BasicViewControllerType = .init(), initialRoute: RouteType, rootRoute: RouteType? = nil) {
+  public init(
+    basicViewController: BasicViewControllerType = .init(),
+    initialRoute: RouteType,
+    rootRoute: RouteType? = nil
+  ) {
     currentRoute = initialRoute
     self.rootRoute = rootRoute ?? initialRoute
     super.init(basicViewController: basicViewController, initialRoute: initialRoute)
     bindEvents()
   }
   
-//  public init(initialRoute: RouteType, user: User) where User.RouteType == RouteType, User.TransferType == StackTransfer {
-//    self.currentRoute = initialRoute
-//    self.rootRoute = initialRoute
-//    self.user = user
-//    super.init(basicViewController: BasicViewControllerType(), initialRoute: initialRoute)
-//  }
-  
   func bindEvents() {
     basicViewController
       .didRemoveViewController
-      .sink { [unowned self] viewController in
-        let idx = children.firstIndex { shouldRemove(child: $0, with: viewController) }
-        if let idx {
-          children.remove(at: idx)
-          currentRoute = rootRoute
+      .sink { [unowned self] viewControllers in
+        for viewController in viewControllers {
+          let idx = children.firstIndex { shouldRemove(child: $0, with: viewController) }
+          if let idx {
+            children.remove(at: idx)
+            currentRoute = rootRoute
+          }
         }
       }
       .store(in: &cancellables)
   }
-
-  private func shouldRemove(child: any Presentable, with viewController: UIViewController) -> Bool {
-    child === viewController || (
-      child === viewController.presenter && (
-        viewController.presenter?.numOfChildren == .some(0) || (
-          viewController.presenter?.numOfChildren == .some(1) &&
-            viewController === viewController.presenter?.children[0]
-        )
-      )
-    )
+  
+  open func prepare(to route: RouteType) -> StackTransfer {
+    fatalError("Please override the \(#function) method.")
   }
-
-  @discardableResult
-  override open func prepare(to route: RouteType) -> StackTransfer {
+  
+  public override func _prepare(to route: RouteType) -> StackTransfer {
+    let transfer = prepare(to: route)
     currentRoute = route
-    return .none
+    return transfer
   }
 
-  override public func perform(_ transfer: StackTransfer) {
+  public override func perform(_ transfer: StackTransfer) {
     switch transfer {
-    case .push(let viewController):
-      basicViewController.push(viewController)
+    case let .push(viewController, animated):
+      basicViewController.push(viewController, animated: animated)
       addChild(viewController)
-    case .pop:
-      basicViewController.pop()
-    case .present(let viewController):
-      basicViewController.present(viewController)
+      
+    case let .pop(animated):
+      basicViewController.pop(animated: animated)
+      
+    case let .present(viewController, animated):
+      basicViewController.present(viewController, animated: animated)
       addChild(viewController)
       isPresenting = true
-    case .dimiss:
-      basicViewController.dismiss()
+      
+    case let .dimiss(animated):
+      basicViewController.dismiss(animated: animated)
       isPresenting = false
-    case .backToRoot:
+      
+    case let .backToRoot(animated):
       if isPresenting {
-        perform(.dimiss)
+        perform(.dimiss(animated))
       } else {
         if numOfChildren > 1 {
-          perform(.pop)
+          perform(.pop(animated))
         }
       }
+      
     case .none:
       break
     }

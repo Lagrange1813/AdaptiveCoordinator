@@ -36,7 +36,6 @@ class ColorListCoordinator: StackCoordinator<ColorListRoute> {
   }
   
   override func prepare(to route: ColorListRoute) -> TransferType {
-    super.prepare(to: route)
     switch route {
     case .list:
       let viewController = ColorListViewController(unownedRouter)
@@ -51,7 +50,7 @@ class ColorListCoordinator: StackCoordinator<ColorListRoute> {
       let viewController = InfoViewController(unownedRouter)
       return .present(viewController)
     case .root:
-      return .backToRoot
+      return .backToRoot()
     }
   }
 }
