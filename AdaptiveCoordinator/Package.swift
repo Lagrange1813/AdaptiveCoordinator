@@ -6,7 +6,6 @@ let package = Package(
   name: "AdaptiveCoordinator",
   platforms: [
     .iOS(.v14),
-    .macOS(.v12),
     .visionOS(.v1),
   ],
   products: [

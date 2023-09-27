@@ -1,12 +1,12 @@
 //
 //  SplitViewController.swift
-//  
+//
 //
 //  Created by Lagrange1813 on 2023/9/4.
 //
 
-import UIKit
 import Combine
+import UIKit
 
 public class InternalStackViewController: StackViewController {
   func set(_ viewController: UIViewController, completion: VoidHandler? = nil) {
@@ -43,6 +43,7 @@ public class SplitViewController: UISplitViewController {
     addSubscriber()
   }
   
+  @available(*, unavailable)
   required init?(coder: NSCoder) {
     fatalError("init(coder:) has not been implemented")
   }
@@ -55,27 +56,19 @@ public class SplitViewController: UISplitViewController {
   
   func addSubscriber() {
     primary.didAddViewController
-      .sink { [unowned self] in
-        _didAddViewController.send()
-      }
+      .subscribe(_didAddViewController)
       .store(in: &cancellables)
     
     secondary.didAddViewController
-      .sink { [unowned self] in
-        _didAddViewController.send()
-      }
+      .subscribe(_didAddViewController)
       .store(in: &cancellables)
     
     primary.didRemoveViewController
-      .sink { [unowned self] in
-        _didRemoveViewController.send($0)
-      }
+      .subscribe(_didRemoveViewController)
       .store(in: &cancellables)
     
     secondary.didRemoveViewController
-      .sink { [unowned self] in
-        _didRemoveViewController.send($0)
-      }
+      .subscribe(_didRemoveViewController)
       .store(in: &cancellables)
   }
 }
@@ -93,8 +86,8 @@ extension SplitViewController: UIAdaptivePresentationControllerDelegate {
   }
 }
 
-extension SplitViewController {
-  public override func present(_ viewController: UIViewController, animated: Bool = true, completion: VoidHandler? = nil) {
+public extension SplitViewController {
+  override func present(_ viewController: UIViewController, animated: Bool = true, completion: VoidHandler? = nil) {
     viewController.presentationController?.delegate = self
     super.present(viewController, animated: animated) { [weak self] in
       self?._didAddViewController.send()
@@ -102,7 +95,7 @@ extension SplitViewController {
     }
   }
   
-  public override func dismiss(animated: Bool = true, completion: VoidHandler? = nil) {
+  override func dismiss(animated: Bool = true, completion: VoidHandler? = nil) {
     let viewController = presentedViewController
     super.dismiss(animated: animated) { [weak self] in
       if let viewController {

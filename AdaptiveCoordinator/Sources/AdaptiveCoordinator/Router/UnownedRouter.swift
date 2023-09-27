@@ -21,16 +21,6 @@ public class UnownedErased<Value> {
   public lazy var wrappedValue: Value = _valueBuilder()
 }
 
-//public class UnownedRouter<RouteType: Route, BasicViewControllerType: UIViewController>: UnownedErased<StrongRouter<RouteType>>, Router {
-//  init(_ coordinator: BaseCoordinator<RouteType, BasicViewControllerType>) {
-//    super.init(coordinator, erase: { $0.strongRouter })
-//  }
-//  
-//  public func transfer(to route: RouteType) {
-//    wrappedValue.transfer(to: route)
-//  }
-//}
-
 public typealias UnownedRouter<RouteType: Route> = UnownedErased<StrongRouter<RouteType>>
 
 extension UnownedErased: Router where Value: Router {

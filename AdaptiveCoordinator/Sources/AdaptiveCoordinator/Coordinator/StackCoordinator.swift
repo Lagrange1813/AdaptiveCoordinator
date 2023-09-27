@@ -23,7 +23,10 @@ open class StackCoordinator<RouteType: Route>: BaseCoordinator<RouteType, StackV
   ) {
     currentRoute = initialRoute
     self.rootRoute = rootRoute ?? initialRoute
-    super.init(basicViewController: basicViewController, initialRoute: initialRoute)
+    super.init(basicViewController: basicViewController, initialRoute: self.rootRoute)
+    if rootRoute != nil && rootRoute != initialRoute {
+      transfer(to: initialRoute)
+    }
     bindEvents()
   }
   
@@ -38,8 +41,7 @@ open class StackCoordinator<RouteType: Route>: BaseCoordinator<RouteType, StackV
             currentRoute = rootRoute
           }
         }
-      }
-      .store(in: &cancellables)
+      }.store(in: &cancellables)
   }
   
   open func prepare(to route: RouteType) -> StackTransfer {
@@ -78,6 +80,9 @@ open class StackCoordinator<RouteType: Route>: BaseCoordinator<RouteType, StackV
           perform(.pop(animated))
         }
       }
+      
+    case let .handover(coordinator):
+      addChild(coordinator)
       
     case .none:
       break

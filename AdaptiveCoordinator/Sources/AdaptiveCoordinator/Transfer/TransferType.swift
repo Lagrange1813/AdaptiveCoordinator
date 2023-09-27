@@ -18,6 +18,7 @@ public enum StackTransfer: Transfer {
   case present(UIViewController, Bool = true)
   case dimiss(Bool = true)
   case backToRoot(Bool = true)
+  case handover(any Coordinator)
   case none
 }
 

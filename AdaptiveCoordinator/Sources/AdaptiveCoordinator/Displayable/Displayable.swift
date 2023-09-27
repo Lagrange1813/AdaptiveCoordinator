@@ -1,5 +1,5 @@
 //
-//  Presentable.swift
+//  Displayable.swift
 //
 //
 //  Created by Lagrange1813 on 2023/9/2.
@@ -7,18 +7,18 @@
 
 import UIKit
 
-public protocol Presentable: AnyObject, Dumpable {
+public protocol Displayable: AnyObject, Dumpable {
   var viewController: UIViewController { get }
-  var presenter: (any Coordinator)? { get set }
+  var displayer: (any Coordinator)? { get set }
 }
 
 private enum AssociatedKeys {
   static var coordinator: UInt8 = 0
 }
 
-extension UIViewController: Presentable {
+extension UIViewController: Displayable {
   public var viewController: UIViewController { self }
-  public weak var presenter: (any Coordinator)? {
+  public weak var displayer: (any Coordinator)? {
     get {
       guard let box = objc_getAssociatedObject(self, &AssociatedKeys.coordinator) as? WeakBoxOfCoordinator else {
         return nil

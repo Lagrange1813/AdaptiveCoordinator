@@ -7,7 +7,7 @@
 
 import UIKit
 
-public protocol Coordinator: Presentable, Router {
+public protocol Coordinator: Displayable, Router {
   associatedtype BasicViewControllerType: UIViewController
   associatedtype TransferType: Transfer
   
@@ -15,14 +15,14 @@ public protocol Coordinator: Presentable, Router {
   var unownedRouter: UnownedRouter<RouteType> { get }
   
   var basicViewController: BasicViewControllerType { get }
-  var children: [any Presentable] { get set }
+  var children: [any Displayable] { get set }
   var numOfChildren: Int { get }
   
   func _prepare(to route: RouteType) -> TransferType
   func perform(_ transfer: TransferType)
   
-  func addChild(_ presentable: any Presentable)
-  func removeChild(_ presentable: any Presentable)
+  func addChild(_ displayable: any Displayable)
+  func removeChild(_ displayable: any Displayable)
 }
 
 extension Coordinator {
@@ -30,17 +30,17 @@ extension Coordinator {
     children.count
   }
   
-  public func addChild(_ presentable: Presentable) {
-    children.append(presentable)
-    presentable.presenter = self
+  public func addChild(_ displayable: Displayable) {
+    children.append(displayable)
+    displayable.displayer = self
   }
   
-  public func removeChild(_ presentable: Presentable) {
-    children.removeAll { $0.viewController === presentable.viewController }
+  public func removeChild(_ displayable: Displayable) {
+    children.removeAll { $0.viewController === displayable.viewController }
   }
 }
 
-// MARK: - Presentable
+// MARK: - Displayable
 
 extension Coordinator {
   public var viewController: UIViewController {

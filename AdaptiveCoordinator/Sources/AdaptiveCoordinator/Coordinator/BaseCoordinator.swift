@@ -11,10 +11,10 @@ open class BaseCoordinator<RouteType: Route, BasicViewControllerType: UIViewCont
   public typealias BasicViewControllerType = BasicViewControllerType
   public typealias TransferType = TransferType
   
-  weak public var presenter: (any Coordinator)?
+  weak public var displayer: (any Coordinator)?
   
   private(set) public var basicViewController: BasicViewControllerType
-  public var children = [any Presentable]()
+  public var children = [any Displayable]()
   
   init(basicViewController: BasicViewControllerType, initialRoute: RouteType) {
     self.basicViewController = basicViewController
@@ -29,12 +29,12 @@ open class BaseCoordinator<RouteType: Route, BasicViewControllerType: UIViewCont
     fatalError()
   }
   
-  func shouldRemove(child: any Presentable, with viewController: UIViewController) -> Bool {
+  func shouldRemove(child: any Displayable, with viewController: UIViewController) -> Bool {
     child === viewController || (
-      child === viewController.presenter && (
-        viewController.presenter?.numOfChildren == .some(0) || (
-          viewController.presenter?.numOfChildren == .some(1) &&
-            viewController === viewController.presenter?.children[0]
+      child === viewController.displayer && (
+        viewController.displayer?.numOfChildren == .some(0) || (
+          viewController.displayer?.numOfChildren == .some(1) &&
+            viewController === viewController.displayer?.children[0]
         )
       )
     )

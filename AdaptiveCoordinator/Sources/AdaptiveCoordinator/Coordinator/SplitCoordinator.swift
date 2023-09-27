@@ -30,8 +30,7 @@ open class SplitCoordinator<RouteType: Route>: BaseCoordinator<RouteType, SplitV
             children.remove(at: idx)
           }
         }
-      }
-      .store(in: &cancellables)
+      }.store(in: &cancellables)
   }
   
   private var isCollapsed: Bool {

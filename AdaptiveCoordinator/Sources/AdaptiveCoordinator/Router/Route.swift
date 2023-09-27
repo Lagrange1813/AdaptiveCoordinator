@@ -12,4 +12,4 @@ import Foundation
 /// 
 /// - It should be enum type.
 ///
-public protocol Route {}
+public protocol Route: Equatable {}
