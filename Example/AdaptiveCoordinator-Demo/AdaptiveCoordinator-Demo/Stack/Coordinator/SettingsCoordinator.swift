@@ -8,10 +8,15 @@
 import AdaptiveCoordinator
 import SwiftUI
 
-enum SettingsRoute: Route {
+// The default implementation provides `init?(rawValue: String)`
+enum SettingsRoute: String, Route, DeepLinkable {
   case list
   case general
   case about
+  
+  init?(link: String) {
+    self.init(rawValue: link)
+  }
 }
 
 class SettingsCoordinator: StackCoordinator<SettingsRoute> {

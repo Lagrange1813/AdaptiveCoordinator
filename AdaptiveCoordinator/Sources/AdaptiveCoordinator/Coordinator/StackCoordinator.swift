@@ -14,7 +14,7 @@ open class StackCoordinator<RouteType: Route>: BaseCoordinator<RouteType, StackV
   
   private var isPresenting: Bool = false
  
-  public var cancellables = Set<AnyCancellable>()
+  private var _cancellables = Set<AnyCancellable>()
 
   public init(
     basicViewController: BasicViewControllerType = .init(),
@@ -41,7 +41,7 @@ open class StackCoordinator<RouteType: Route>: BaseCoordinator<RouteType, StackV
             currentRoute = rootRoute
           }
         }
-      }.store(in: &cancellables)
+      }.store(in: &_cancellables)
   }
   
   open func prepare(to route: RouteType) -> StackTransfer {

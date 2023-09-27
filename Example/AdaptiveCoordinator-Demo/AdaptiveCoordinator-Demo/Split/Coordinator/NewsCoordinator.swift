@@ -14,6 +14,10 @@ enum NewsRoute: Route {
   case news(String)
   case info
   case root
+  
+  init?(deeplink: String) {
+    nil
+  }
 }
 
 class NewsCoordinator: SplitCoordinator<NewsRoute> {

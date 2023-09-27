@@ -8,6 +8,7 @@
 import UIKit
 
 open class BaseCoordinator<RouteType: Route, BasicViewControllerType: UIViewController, TransferType: Transfer>: Coordinator {
+  public typealias RouteType = RouteType
   public typealias BasicViewControllerType = BasicViewControllerType
   public typealias TransferType = TransferType
   

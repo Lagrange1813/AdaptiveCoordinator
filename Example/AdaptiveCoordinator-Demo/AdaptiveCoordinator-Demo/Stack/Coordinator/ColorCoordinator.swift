@@ -8,11 +8,28 @@
 import AdaptiveCoordinator
 import UIKit
 
-enum ColorRoute: Route {
+enum ColorRoute: Route, DeepLinkable {
   case color(String)
   case meaning(String)
   case colors
   case root
+  
+  init?(link: String) {
+    self.init(link)
+  }
+  
+  init?(_ str: String) {
+    if str.starts(with: "meaning") {
+      let components = str.components(separatedBy: ":")
+      guard
+        components.count == 2,
+        let argu = components.last
+      else { return nil }
+      self = .meaning(argu)
+    } else {
+      return nil
+    }
+  }
 }
 
 class ColorCoordinator: StackCoordinator<ColorRoute> {

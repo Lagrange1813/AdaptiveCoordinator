@@ -16,26 +16,26 @@ public protocol Coordinator: Displayable, Router {
   
   var basicViewController: BasicViewControllerType { get }
   var children: [any Displayable] { get set }
-  var numOfChildren: Int { get }
+//  var numOfChildren: Int { get }
   
   func _prepare(to route: RouteType) -> TransferType
   func perform(_ transfer: TransferType)
   
-  func addChild(_ displayable: any Displayable)
-  func removeChild(_ displayable: any Displayable)
+//  func addChild(_ displayable: any Displayable)
+//  func removeChild(_ displayable: any Displayable)
 }
 
 extension Coordinator {
-  public var numOfChildren: Int {
+  var numOfChildren: Int {
     children.count
   }
   
-  public func addChild(_ displayable: Displayable) {
+  func addChild(_ displayable: Displayable) {
     children.append(displayable)
     displayable.displayer = self
   }
   
-  public func removeChild(_ displayable: Displayable) {
+  func removeChild(_ displayable: Displayable) {
     children.removeAll { $0.viewController === displayable.viewController }
   }
 }
@@ -62,5 +62,19 @@ extension Coordinator {
   
   public var unownedRouter: UnownedRouter<RouteType> {
     UnownedRouter(self, erase: { $0.strongRouter })
+  }
+}
+
+// MARK: - DeepLink
+
+extension Coordinator {
+  public func handle(links: [String]) {
+    guard
+      let route = (RouteType.self as? any DeepLinkable.Type)?.init(link: links[0]) as? Self.RouteType
+    else { return }
+    transfer(to: route)
+    guard links.count > 1 else { return }
+    let remaining = Array(links[1...])
+    children.forEach { ($0 as? any Coordinator)?.handle(links: remaining) }
   }
 }
