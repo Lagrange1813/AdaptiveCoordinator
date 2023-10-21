@@ -6,15 +6,15 @@
 //
 
 import AdaptiveCoordinator
-import UIKit
 import Combine
+import UIKit
 
 enum NewsRoute: Route {
   case list
-  case day
-  case news(String)
-  case info
   case root
+  
+  case listRoute(NewsListRoute)
+  case detailRoute(NewsDetailRoute)
   
   init?(deeplink: String) {
     nil
@@ -46,18 +46,39 @@ class NewsCoordinator: SplitCoordinator<NewsRoute> {
   override func prepare(to route: NewsRoute) -> SplitTransfer {
     switch route {
     case .list:
-      let viewController = NewsListViewController(unownedRouter)
-      return .primary(.push(viewController, true))
-    case .day:
-      return .none
-    case .news(let str):
-      let viewController = NewsDetailViewController(str)
-      return .secondary(.set(viewController))
-    case .info:
-      let viewController = NewsInfoViewController(unownedRouter)
-      return .present(viewController)
+      let coordinator = NewsListCoordinator(basicViewController: basicViewController.primary, initialRoute: .list)
+      pullback(subCoordinator: coordinator) {
+        .listRoute($0)
+      }
+      return .primary(.handover(coordinator))
     case .root:
       return .dimiss()
+      
+    // Pull-back
+      
+    case let .listRoute(route):
+      switch route {
+      case .list:
+        return .none
+      case .info:
+        let viewController = NewsInfoViewController(unownedRouter)
+        return .present(viewController)
+      case let .detail(str):
+        let coordinator = NewsDetailCoordinator(basicViewController: basicViewController.secondary, initialRoute: .detail(str))
+        pullback(subCoordinator: coordinator) {
+          .detailRoute($0)
+        }
+        return .secondary(.handover(coordinator))
+      }
+      
+    case let .detailRoute(route):
+      switch route {
+      case .detail:
+        return .none
+      case .info:
+        let viewController = NewsInfoViewController(unownedRouter)
+        return .present(viewController)
+      }
     }
   }
 }

@@ -29,9 +29,9 @@ public class SplitViewController: UISplitViewController {
   public lazy var didAddViewController = _didAddViewController.eraseToAnyPublisher()
   public lazy var didRemoveViewController = _didRemoveViewController.eraseToAnyPublisher()
   
-  lazy var primary = InternalStackViewController()
-  lazy var secondary = InternalStackViewController()
-  lazy var compact = InternalStackViewController()
+  public lazy var primary = InternalStackViewController()
+  public lazy var secondary = InternalStackViewController()
+  public lazy var compact = InternalStackViewController()
   
   private var removingViewController: UIViewController?
   

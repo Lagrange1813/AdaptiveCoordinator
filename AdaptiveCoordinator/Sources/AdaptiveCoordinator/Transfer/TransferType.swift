@@ -28,6 +28,7 @@ public enum SplitTransfer: Transfer {
     case pop(Bool = true)
     case set(UIViewController)
     case backToRoot(Bool = true)
+    case handover(any Coordinator)
   }
   
   case primary(TransferType)

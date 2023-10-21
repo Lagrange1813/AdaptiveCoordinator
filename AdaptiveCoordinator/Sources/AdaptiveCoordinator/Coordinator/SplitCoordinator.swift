@@ -94,6 +94,9 @@ extension SplitCoordinator {
       
     case .backToRoot:
       break
+      
+    case let .handover(coordinator):
+      addChild(coordinator)
     }
   }
 }

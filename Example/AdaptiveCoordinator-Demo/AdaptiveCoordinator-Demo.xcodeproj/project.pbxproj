@@ -26,6 +26,8 @@
 		20C76C5D2AAAC8BD00D081BF /* NewsDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20C76C5C2AAAC8BD00D081BF /* NewsDetailViewController.swift */; };
 		20C76C5F2AAAC93600D081BF /* NewsDayListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20C76C5E2AAAC93600D081BF /* NewsDayListViewController.swift */; };
 		20C76C612AAC982200D081BF /* NewsInfoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20C76C602AAC982200D081BF /* NewsInfoViewController.swift */; };
+		20F6FCB72AE43F1A00112F48 /* NewsDetailCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20F6FCB62AE43F1A00112F48 /* NewsDetailCoordinator.swift */; };
+		20F6FCB92AE441B500112F48 /* NewsListCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20F6FCB82AE441B500112F48 /* NewsListCoordinator.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -49,6 +51,8 @@
 		20C76C5C2AAAC8BD00D081BF /* NewsDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewsDetailViewController.swift; sourceTree = "<group>"; };
 		20C76C5E2AAAC93600D081BF /* NewsDayListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewsDayListViewController.swift; sourceTree = "<group>"; };
 		20C76C602AAC982200D081BF /* NewsInfoViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewsInfoViewController.swift; sourceTree = "<group>"; };
+		20F6FCB62AE43F1A00112F48 /* NewsDetailCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewsDetailCoordinator.swift; sourceTree = "<group>"; };
+		20F6FCB82AE441B500112F48 /* NewsListCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewsListCoordinator.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -138,6 +142,8 @@
 			isa = PBXGroup;
 			children = (
 				20C76C542AAA130400D081BF /* NewsCoordinator.swift */,
+				20F6FCB82AE441B500112F48 /* NewsListCoordinator.swift */,
+				20F6FCB62AE43F1A00112F48 /* NewsDetailCoordinator.swift */,
 			);
 			path = Coordinator;
 			sourceTree = "<group>";
@@ -238,10 +244,12 @@
 				20C76C5F2AAAC93600D081BF /* NewsDayListViewController.swift in Sources */,
 				203ECC3A2AA3609600DA7A6D /* ViewController.swift in Sources */,
 				203E00DC2AA88A2600E91F09 /* SettingsCoordinator.swift in Sources */,
+				20F6FCB92AE441B500112F48 /* NewsListCoordinator.swift in Sources */,
 				203ECC5B2AA84E7400DA7A6D /* ColorMeaningViewController.swift in Sources */,
 				203ECC362AA3609600DA7A6D /* AppDelegate.swift in Sources */,
 				20C76C5D2AAAC8BD00D081BF /* NewsDetailViewController.swift in Sources */,
 				203ECC382AA3609600DA7A6D /* SceneDelegate.swift in Sources */,
+				20F6FCB72AE43F1A00112F48 /* NewsDetailCoordinator.swift in Sources */,
 				203ECC532AA361FE00DA7A6D /* SettingsViewController.swift in Sources */,
 				20C76C5B2AAAC8AA00D081BF /* NewsListViewController.swift in Sources */,
 				20C76C612AAC982200D081BF /* NewsInfoViewController.swift in Sources */,

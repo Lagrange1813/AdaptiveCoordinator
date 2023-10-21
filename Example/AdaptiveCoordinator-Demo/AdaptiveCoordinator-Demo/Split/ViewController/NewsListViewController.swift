@@ -10,9 +10,9 @@ import AdaptiveCoordinator
 import SwiftUI
 
 class NewsListViewController: UIHostingController<NewsList> {
-  let router: UnownedRouter<NewsRoute>
+  let router: UnownedRouter<NewsListRoute>
   
-  init(_ router: UnownedRouter<NewsRoute>) {
+  init(_ router: UnownedRouter<NewsListRoute>) {
     self.router = router
     super.init(rootView: NewsList(router: router))
     configure()
@@ -28,13 +28,13 @@ class NewsListViewController: UIHostingController<NewsList> {
 }
 
 struct NewsList: View {
-  let router: UnownedRouter<NewsRoute>
+  let router: UnownedRouter<NewsListRoute>
   
   var body: some View {
     List {
       ForEach(0..<10) { index in
         Button{
-          router.transfer(to: .news("News \(index)"))
+          router.transfer(to: .detail("News \(index)"))
         } label: {
           Text("News \(index)")
             .foregroundStyle(.black)
