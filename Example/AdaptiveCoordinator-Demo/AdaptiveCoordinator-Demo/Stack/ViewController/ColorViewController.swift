@@ -38,15 +38,26 @@ class ColorViewController: UIViewController {
     
     title = color
     
-    let button = UIButton()
-    button.setTitle("Meaning", for: .normal)
-    button.setTitleColor(.systemBlue, for: .normal)
-    button.addTarget(self, action: #selector(meaningButtonDidTap), for: .touchUpInside)
-    view.addSubview(button)
-    button.translatesAutoresizingMaskIntoConstraints = false
+    let meaningButton = UIButton()
+    meaningButton.setTitle("Meaning", for: .normal)
+    meaningButton.setTitleColor(.systemBlue, for: .normal)
+    meaningButton.addTarget(self, action: #selector(meaningButtonDidTap), for: .touchUpInside)
+    view.addSubview(meaningButton)
+    meaningButton.translatesAutoresizingMaskIntoConstraints = false
     NSLayoutConstraint.activate([
-      button.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-      button.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+      meaningButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+      meaningButton.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+    ])
+    
+    let settingsButton = UIButton()
+    settingsButton.setTitle("Settings", for: .normal)
+    settingsButton.setTitleColor(.systemBlue, for: .normal)
+    settingsButton.addTarget(self, action: #selector(settingsButtonDidTap), for: .touchUpInside)
+    view.addSubview(settingsButton)
+    settingsButton.translatesAutoresizingMaskIntoConstraints = false
+    NSLayoutConstraint.activate([
+      settingsButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+      settingsButton.centerYAnchor.constraint(equalTo: view.centerYAnchor, constant: 50),
     ])
   }
   
@@ -56,5 +67,9 @@ class ColorViewController: UIViewController {
   
   @objc func meaningButtonDidTap() {
     router.transfer(to: .meaning(color + " Meaning"))
+  }
+  
+  @objc func settingsButtonDidTap() {
+    router.transfer(to: .settings)
   }
 }

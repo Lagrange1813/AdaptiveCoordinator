@@ -11,8 +11,6 @@ import UIKit
 open class SplitCoordinator<RouteType: Route>: BaseCoordinator<RouteType, SplitViewController, SplitTransfer> {
   @Published public private(set) var currentRoute: RouteType
   
-  public var cancellables = Set<AnyCancellable>()
-  
   public init(basicViewController: BasicViewControllerType = .init(), configure: ((BasicViewControllerType) -> Void)? = nil, initialRoute: RouteType) {
     currentRoute = initialRoute
     super.init(basicViewController: basicViewController, initialRoute: initialRoute)
@@ -30,7 +28,7 @@ open class SplitCoordinator<RouteType: Route>: BaseCoordinator<RouteType, SplitV
             children.remove(at: idx)
           }
         }
-      }.store(in: &cancellables)
+      }.store(in: &_cancellables)
   }
   
   private var isCollapsed: Bool {

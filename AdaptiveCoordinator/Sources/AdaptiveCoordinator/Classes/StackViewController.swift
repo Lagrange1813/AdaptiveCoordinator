@@ -6,19 +6,27 @@
 //
 
 import Combine
+import DequeModule
 import UIKit
 
 public class StackViewController: UINavigationController {
   var _didAddViewController = PassthroughSubject<Void, Never>()
   var _didRemoveViewController = PassthroughSubject<[UIViewController], Never>()
   
-  public lazy var didAddViewController = _didAddViewController.eraseToAnyPublisher()
-  public lazy var didRemoveViewController = _didRemoveViewController.eraseToAnyPublisher()
+  public lazy var didAddViewController =
+    _didAddViewController
+      .eraseToAnyPublisher()
+  
+  public lazy var didRemoveViewController =
+    _didRemoveViewController
+      .eraseToAnyPublisher()
+      .removeDuplicates()
   
   ///
-  /// The view controller that is being popped or dismissed.
+  /// The view controllers that are being popped or dismissed.
   ///
-  private var removingViewController: UIViewController?
+  private var removingViewControllers = Deque<UIViewController>()
+//  private var queuing = Set<UIViewController>()
   
   /// https://stackoverflow.com/questions/12904410/completion-block-for-popviewcontroller
   private func executeAfterTransition(animated: Bool, completion: @escaping VoidHandler) {
@@ -35,41 +43,62 @@ public class StackViewController: UINavigationController {
   
   @discardableResult
   override public func popViewController(animated: Bool) -> UIViewController? {
-    removingViewController = super.popViewController(animated: animated)
+    if let viewController = super.popViewController(animated: animated) {
+      removingViewControllers.append(viewController)
+    }
     executeAfterTransition(animated: animated) { [weak self] in
-      if let viewController = self?.removingViewController {
+      if let viewController = self?.removingViewControllers.popFirst() {
         self?._didRemoveViewController.send([viewController])
-        self?.removingViewController = nil
       }
     }
     return nil
+  }
+  
+  public func popViewController(
+    animated: Bool,
+    completion: VoidHandler? = nil
+  ) {
+    if let viewController = super.popViewController(animated: animated) {
+      removingViewControllers.append(viewController)
+    }
+    executeAfterTransition(animated: animated) { [weak self] in
+      if let viewController = self?.removingViewControllers.popFirst() {
+        self?._didRemoveViewController.send([viewController])
+        completion?()
+      }
+    }
   }
 }
 
 extension StackViewController: UIAdaptivePresentationControllerDelegate {
   public func presentationControllerWillDismiss(_ presentationController: UIPresentationController) {
-    removingViewController = presentedViewController
+    if let viewController = presentedViewController {
+      removingViewControllers.append(viewController)
+    }
   }
   
   public func presentationControllerDidDismiss(_ presentationController: UIPresentationController) {
-    if let viewController = removingViewController {
+    if let viewController = removingViewControllers.popFirst() {
       _didRemoveViewController.send([viewController])
-      removingViewController = nil
     }
   }
 }
 
 public extension StackViewController {
-  func push(_ viewController: UIViewController, animated: Bool = true, completion: VoidHandler? = nil) {
+  func push(
+    _ viewController: UIViewController,
+    animated: Bool = true,
+    completion: VoidHandler? = nil
+  ) {
     pushViewController(viewController, animated: animated)
     executeAfterTransition(animated: animated) { [weak self] in
-        self?._didAddViewController.send()
-        completion?()
+      self?._didAddViewController.send()
+      completion?()
     }
   }
 
   func pop(animated: Bool = true, completion: VoidHandler? = nil) {
-    popViewController(animated: animated)
+    popViewController(animated: animated, completion: completion)
   }
   
   override func present(_ viewController: UIViewController, animated: Bool = true, completion: VoidHandler? = nil) {

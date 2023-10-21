@@ -13,8 +13,7 @@ open class StackCoordinator<RouteType: Route>: BaseCoordinator<RouteType, StackV
   public private(set) var rootRoute: RouteType
   
   private var isPresenting: Bool = false
- 
-  private var _cancellables = Set<AnyCancellable>()
+  public private(set) var isInitial: Bool = true
 
   public init(
     basicViewController: BasicViewControllerType = .init(),
@@ -24,7 +23,8 @@ open class StackCoordinator<RouteType: Route>: BaseCoordinator<RouteType, StackV
     currentRoute = initialRoute
     self.rootRoute = rootRoute ?? initialRoute
     super.init(basicViewController: basicViewController, initialRoute: self.rootRoute)
-    if rootRoute != nil && rootRoute != initialRoute {
+    isInitial = false
+    if rootRoute != nil {
       transfer(to: initialRoute)
     }
     bindEvents()
@@ -48,13 +48,13 @@ open class StackCoordinator<RouteType: Route>: BaseCoordinator<RouteType, StackV
     fatalError("Please override the \(#function) method.")
   }
   
-  public override func _prepare(to route: RouteType) -> StackTransfer {
+  override public func _prepare(to route: RouteType) -> StackTransfer {
     let transfer = prepare(to: route)
     currentRoute = route
     return transfer
   }
 
-  public override func perform(_ transfer: StackTransfer) {
+  override public func perform(_ transfer: StackTransfer) {
     switch transfer {
     case let .push(viewController, animated):
       basicViewController.push(viewController, animated: animated)
@@ -87,5 +87,10 @@ open class StackCoordinator<RouteType: Route>: BaseCoordinator<RouteType, StackV
     case .none:
       break
     }
+  }
+  
+  override public func drop(animated: Bool = true) {
+    super.drop(animated: animated)
+    perform(.pop(animated))
   }
 }

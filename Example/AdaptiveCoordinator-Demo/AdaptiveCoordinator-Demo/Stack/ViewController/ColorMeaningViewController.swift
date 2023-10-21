@@ -45,15 +45,26 @@ class ColorMeaningViewController: UIViewController {
       label.centerYAnchor.constraint(equalTo: view.centerYAnchor, constant: -100),
     ])
     
-    let button = UIButton()
-    button.setTitle("Back", for: .normal)
-    button.setTitleColor(.systemBlue, for: .normal)
-    button.addTarget(self, action: #selector(backButtonDidTap), for: .touchUpInside)
-    view.addSubview(button)
-    button.translatesAutoresizingMaskIntoConstraints = false
+    let backButton = UIButton()
+    backButton.setTitle("Back", for: .normal)
+    backButton.setTitleColor(.systemBlue, for: .normal)
+    backButton.addTarget(self, action: #selector(backButtonDidTap), for: .touchUpInside)
+    view.addSubview(backButton)
+    backButton.translatesAutoresizingMaskIntoConstraints = false
     NSLayoutConstraint.activate([
-      button.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-      button.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+      backButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+      backButton.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+    ])
+    
+    let settingsButton = UIButton()
+    settingsButton.setTitle("Settings", for: .normal)
+    settingsButton.setTitleColor(.systemBlue, for: .normal)
+    settingsButton.addTarget(self, action: #selector(settingsButtonDidTap), for: .touchUpInside)
+    view.addSubview(settingsButton)
+    settingsButton.translatesAutoresizingMaskIntoConstraints = false
+    NSLayoutConstraint.activate([
+      settingsButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+      settingsButton.centerYAnchor.constraint(equalTo: view.centerYAnchor, constant: 50),
     ])
   }
   
@@ -62,6 +73,10 @@ class ColorMeaningViewController: UIViewController {
   }
   
   @objc func backButtonDidTap() {
-    router.transfer(to: .root)
+    router.transfer(to: .color(""))
+  }
+  
+  @objc func settingsButtonDidTap() {
+    router.transfer(to: .settings)
   }
 }

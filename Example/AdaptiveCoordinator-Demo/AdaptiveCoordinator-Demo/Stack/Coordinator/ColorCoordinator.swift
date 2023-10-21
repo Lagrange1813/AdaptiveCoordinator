@@ -12,7 +12,8 @@ enum ColorRoute: Route, DeepLinkable {
   case color(String)
   case meaning(String)
   case colors
-  case root
+  case settings
+  case general
   
   init?(link: String) {
     self.init(link)
@@ -36,15 +37,21 @@ class ColorCoordinator: StackCoordinator<ColorRoute> {
   override func prepare(to route: ColorRoute) -> TransferType {
     switch route {
     case .color(let str):
-      let viewController = ColorViewController(router: unownedRouter, color: str)
-      return .push(viewController)
+      if isInitial {
+        let viewController = ColorViewController(router: unownedRouter, color: str)
+        return .push(viewController)
+      } else {
+        return .backToRoot()
+      }
     case .meaning(let str):
       let viewController = ColorMeaningViewController(router: unownedRouter, meaning: str)
       return .push(viewController)
     case .colors:
       return .pop()
-    case .root:
-      return .backToRoot()
+    case .settings:
+      return .none
+    case .general:
+      return .none
     }
   }
 }

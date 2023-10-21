@@ -23,8 +23,12 @@ class SettingsCoordinator: StackCoordinator<SettingsRoute> {
   override func prepare(to route: SettingsRoute) -> TransferType {
     switch route {
     case .list:
-      let viewController = SettingsViewController(unownedRouter)
-      return .push(viewController)
+      if isInitial {
+        let viewController = SettingsViewController(unownedRouter)
+        return .push(viewController)
+      } else {
+        return .backToRoot()
+      }
     case .general:
       let viewController = UIHostingController { GeneralView() }
       return .push(viewController)

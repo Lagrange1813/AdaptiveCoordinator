@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import Combine
 
 public protocol Coordinator: Displayable, Router {
   associatedtype BasicViewControllerType: UIViewController
@@ -18,11 +19,14 @@ public protocol Coordinator: Displayable, Router {
   var children: [any Displayable] { get set }
 //  var numOfChildren: Int { get }
   
+  var forwarder: AnyPublisher<RouteType, Never> { get }
+  
   func _prepare(to route: RouteType) -> TransferType
   func perform(_ transfer: TransferType)
   
 //  func addChild(_ displayable: any Displayable)
 //  func removeChild(_ displayable: any Displayable)
+  func drop(animated: Bool)
 }
 
 extension Coordinator {
@@ -49,11 +53,11 @@ extension Coordinator {
 }
 
 // MARK: - Router
-extension Coordinator {
-  public func transfer(to route: RouteType) {
-    perform(_prepare(to: route))
-  }
-}
+//extension Coordinator {
+//  public func transfer(to route: RouteType) {
+//    perform(_prepare(to: route))
+//  }
+//}
 
 extension Coordinator {
   public var strongRouter: StrongRouter<RouteType> {

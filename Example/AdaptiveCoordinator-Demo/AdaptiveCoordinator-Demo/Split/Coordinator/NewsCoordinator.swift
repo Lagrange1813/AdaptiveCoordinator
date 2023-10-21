@@ -7,6 +7,7 @@
 
 import AdaptiveCoordinator
 import UIKit
+import Combine
 
 enum NewsRoute: Route {
   case list
@@ -21,6 +22,8 @@ enum NewsRoute: Route {
 }
 
 class NewsCoordinator: SplitCoordinator<NewsRoute> {
+  var cancellables = Set<AnyCancellable>()
+  
   init(basicViewController: SplitCoordinator<NewsRoute>.BasicViewControllerType = .init(), initialRoute: NewsRoute) {
     super.init(basicViewController: basicViewController, configure: { svc in
       svc.preferredSplitBehavior = .tile

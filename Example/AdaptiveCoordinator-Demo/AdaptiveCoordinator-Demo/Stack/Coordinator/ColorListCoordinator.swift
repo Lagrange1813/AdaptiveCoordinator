@@ -15,8 +15,8 @@ enum ColorListRoute: Route, DeepLinkable {
   case color(String)
   case settings
   case info
-  // equal to list here
-  case root
+  
+  case colorRoute(ColorRoute)
   
   init?(link: String) {
     self.init(link)
@@ -70,10 +70,17 @@ class ColorListCoordinator: StackCoordinator<ColorListRoute> {
   override func prepare(to route: ColorListRoute) -> TransferType {
     switch route {
     case .list:
-      let viewController = ColorListViewController(unownedRouter)
-      return .push(viewController)
-    case .color(let str):
+      if isInitial {
+        let viewController = ColorListViewController(unownedRouter)
+        return .push(viewController)
+      } else {
+        return .backToRoot()
+      }
+    case let .color(str):
       let coordinator = ColorCoordinator(basicViewController: basicViewController, initialRoute: .color(str))
+      pullback(subCoordinator: coordinator) {
+        .colorRoute($0)
+      }
       return .handover(coordinator)
     case .settings:
       let coordinator = SettingsCoordinator(basicViewController: basicViewController, initialRoute: .list)
@@ -81,8 +88,17 @@ class ColorListCoordinator: StackCoordinator<ColorListRoute> {
     case .info:
       let viewController = InfoViewController(unownedRouter)
       return .present(viewController)
-    case .root:
-      return .backToRoot()
+    case let .colorRoute(route):
+      switch route {
+      case .settings:
+        drop(animated: true)
+        return prepare(to: .settings)
+      case .general:
+        print("General")
+        return .none
+      default:
+        return .none
+      }
     }
   }
 }

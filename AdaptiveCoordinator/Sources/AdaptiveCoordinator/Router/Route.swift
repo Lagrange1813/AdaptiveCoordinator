@@ -12,7 +12,7 @@ import Foundation
 /// 
 /// - It should be enum type.
 ///
-public protocol Route: Equatable {}
+public protocol Route {}
 
 //extension Route {
 //  init?(deeplink: String) { return nil }
