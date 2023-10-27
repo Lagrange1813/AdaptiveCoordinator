@@ -8,29 +8,50 @@
 import Combine
 import UIKit
 
-open class StackCoordinator<RouteType: Route>: BaseCoordinator<RouteType, StackViewController, StackTransfer> {
-  @Published public private(set) var currentRoute: RouteType
-  public private(set) var rootRoute: RouteType
+open class StackCoordinator<RouteType: Route>: Coordinator {
+  // Type Declation
+  public typealias RouteType = RouteType
+  public typealias BasicViewControllerType = StackViewController
+  public typealias TransferType = StackTransfer
   
+  // Displayable
+  public var displayerID: UUID?
+  
+  // Coordinator
+  public let id: UUID
+  public private(set) var basicViewController: BasicViewControllerType
+  public var children = [any Displayable]()
+  public let _forwarder = PassthroughSubject<RouteType, Never>()
+  public lazy var forwarder: AnyPublisher<RouteType, Never> = _forwarder.eraseToAnyPublisher()
+  public var _cancellables = Set<AnyCancellable>()
+  
+  // Stack
   private var isPresenting: Bool = false
   public private(set) var isInitial: Bool = true
 
   public init(
     basicViewController: BasicViewControllerType = .init(),
-    initialRoute: RouteType,
-    rootRoute: RouteType? = nil
+    initialRoute: RouteType
   ) {
-    currentRoute = initialRoute
-    self.rootRoute = rootRoute ?? initialRoute
-    super.init(basicViewController: basicViewController, initialRoute: self.rootRoute)
-//    isInitial = false
-    if rootRoute != nil {
-      transfer(to: initialRoute)
-    }
-    bindEvents()
+    self.id = UUID()
+    self.basicViewController = basicViewController
+
+    _addSubscriber()
+    transfer(to: initialRoute)
   }
   
-  func bindEvents() {
+  private func _addSubscriber() {
+    forwarder
+      .sink { [unowned self] route in
+        Task {
+          await perform(_prepare(to: route))
+          if isInitial {
+            isInitial = false
+          }
+        }
+      }
+      .store(in: &_cancellables)
+    
     basicViewController
       .didRemoveViewController
       .sink { [unowned self] viewControllers in
@@ -38,10 +59,10 @@ open class StackCoordinator<RouteType: Route>: BaseCoordinator<RouteType, StackV
           let idx = children.firstIndex { shouldRemove(child: $0, with: viewController) }
           if let idx {
             children.remove(at: idx)
-            currentRoute = rootRoute
           }
         }
-      }.store(in: &_cancellables)
+      }
+      .store(in: &_cancellables)
   }
   
   @MainActor
@@ -49,13 +70,24 @@ open class StackCoordinator<RouteType: Route>: BaseCoordinator<RouteType, StackV
     fatalError("Please override the \(#function) method.")
   }
   
-  override public func _prepare(to route: RouteType) -> StackTransfer {
+  @MainActor
+  public func _prepare(to route: RouteType) -> StackTransfer {
     let transfer = prepare(to: route)
-    currentRoute = route
     return transfer
   }
+}
 
-  override public func perform(_ transfer: StackTransfer) {
+// Router
+public extension StackCoordinator {
+  func transfer(to route: RouteType) {
+    _forwarder.send(route)
+  }
+}
+
+// Coordinator
+public extension StackCoordinator {
+  @MainActor
+  func perform(_ transfer: StackTransfer) {
     switch transfer {
     case let .push(viewController, animated):
       basicViewController.push(viewController, animated: animated)
@@ -90,8 +122,25 @@ open class StackCoordinator<RouteType: Route>: BaseCoordinator<RouteType, StackV
     }
   }
   
-  override public func drop(animated: Bool = true) {
-    super.drop(animated: animated)
+  func pullback<SubCoordinator: Coordinator>(
+    subCoordinator: SubCoordinator,
+    _ transformer: @escaping (SubCoordinator.RouteType) -> RouteType
+  ) {
+    subCoordinator
+      .forwarder
+      .map(transformer)
+      .subscribe(_forwarder)
+      .store(in: &_cancellables)
+  }
+  
+  @MainActor
+  func drop(animated: Bool = true) {
+    for child in children {
+      if let coordinator = child as? any Coordinator {
+        coordinator.drop(animated: animated)
+      }
+    }
     perform(.pop(animated))
+    print("Drop: \(String(describing: type(of: self)))")
   }
 }

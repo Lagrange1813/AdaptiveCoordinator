@@ -8,17 +8,46 @@
 import Combine
 import UIKit
 
-open class SplitCoordinator<RouteType: Route>: BaseCoordinator<RouteType, SplitViewController, SplitTransfer> {
-  @Published public private(set) var currentRoute: RouteType
+open class SplitCoordinator<RouteType: Route>: Coordinator {
+  public typealias RouteType = RouteType
+  public typealias BasicViewControllerType = SplitViewController
+  public typealias TransferType = SplitTransfer
   
-  public init(basicViewController: BasicViewControllerType = .init(), configure: ((BasicViewControllerType) -> Void)? = nil, initialRoute: RouteType) {
-    currentRoute = initialRoute
-    super.init(basicViewController: basicViewController, initialRoute: initialRoute)
-    configure?(basicViewController)
-    addSubscriber()
+  public var displayerID: UUID?
+  
+  public let id: UUID
+  public private(set) var basicViewController: BasicViewControllerType
+  public var children = [any Displayable]()
+  public let _forwarder = PassthroughSubject<RouteType, Never>()
+  public lazy var forwarder: AnyPublisher<RouteType, Never> = _forwarder.eraseToAnyPublisher()
+  public var _cancellables = Set<AnyCancellable>()
+  
+  public private(set) var isInitial: Bool = true
+  
+  public init(
+    basicViewController: BasicViewControllerType = .init(),
+    configure: ((BasicViewControllerType) -> Void)? = nil,
+    initialRoute: RouteType
+  ) {
+    self.id = UUID()
+    self.basicViewController = basicViewController
+    
+    _addSubscriber()
+    transfer(to: initialRoute)
   }
   
-  func addSubscriber() {
+  func _addSubscriber() {
+    forwarder
+      .sink { [unowned self] route in
+        Task {
+          await perform(_prepare(to: route))
+          if isInitial {
+            isInitial = false
+          }
+        }
+      }
+      .store(in: &_cancellables)
+    
     basicViewController
       .didRemoveViewController
       .sink { [unowned self] viewControllers in
@@ -35,17 +64,27 @@ open class SplitCoordinator<RouteType: Route>: BaseCoordinator<RouteType, SplitV
     basicViewController.isCollapsed
   }
   
+  @MainActor
   open func prepare(to route: RouteType) -> SplitTransfer {
     fatalError("Please override the \(#function) method.")
   }
   
-  public override func _prepare(to route: RouteType) -> SplitTransfer {
+  @MainActor
+  public func _prepare(to route: RouteType) -> SplitTransfer {
     let transfer = prepare(to: route)
-    currentRoute = route
     return transfer
   }
-  
-  override public func perform(_ transfer: SplitTransfer) {
+}
+
+public extension SplitCoordinator {
+  func transfer(to route: RouteType) {
+    _forwarder.send(route)
+  }
+}
+
+public extension SplitCoordinator {
+  @MainActor
+  func perform(_ transfer: SplitTransfer) {
     switch transfer {
     case let .primary(transferType),
          let .secondary(transferType),
@@ -62,6 +101,27 @@ open class SplitCoordinator<RouteType: Route>: BaseCoordinator<RouteType, SplitV
     case .none:
       break
     }
+  }
+  
+  func pullback<SubCoordinator: Coordinator>(
+    subCoordinator: SubCoordinator,
+    _ transformer: @escaping (SubCoordinator.RouteType) -> RouteType
+  ) {
+    subCoordinator
+      .forwarder
+      .map(transformer)
+      .subscribe(_forwarder)
+      .store(in: &_cancellables)
+  }
+  
+  @MainActor
+  func drop(animated: Bool = true) {
+    for child in children {
+      if let coordinator = child as? any Coordinator {
+        coordinator.drop(animated: animated)
+      }
+    }
+    print("Drop: \(String(describing: type(of: self)))")
   }
 }
 

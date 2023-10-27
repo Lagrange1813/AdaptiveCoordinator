@@ -1,82 +1,96 @@
 //
 //  Coordinator.swift
-//  
+//
 //
 //  Created by Lagrange1813 on 2023/9/3.
 //
 
-import UIKit
 import Combine
+import UIKit
 
-public protocol Coordinator: Displayable, Router {
+public protocol Coordinator: Displayable, Router, Dumpable {
+  // Type
   associatedtype BasicViewControllerType: UIViewController
   associatedtype TransferType: Transfer
-  
-  var strongRouter: StrongRouter<RouteType> { get }
-  var unownedRouter: UnownedRouter<RouteType> { get }
-  
+
+  // Properties
+  var id: UUID { get }
   var basicViewController: BasicViewControllerType { get }
   var children: [any Displayable] { get set }
-//  var numOfChildren: Int { get }
-  
   var forwarder: AnyPublisher<RouteType, Never> { get }
-  
-  func _prepare(to route: RouteType) -> TransferType
-  func perform(_ transfer: TransferType)
-  
-//  func addChild(_ displayable: any Displayable)
-//  func removeChild(_ displayable: any Displayable)
-  func drop(animated: Bool)
-}
 
-extension Coordinator {
-  var numOfChildren: Int {
-    children.count
-  }
-  
-  func addChild(_ displayable: Displayable) {
-    children.append(displayable)
-    displayable.displayer = self
-  }
-  
-  func removeChild(_ displayable: Displayable) {
-    children.removeAll { $0.viewController === displayable.viewController }
-  }
+  // Functions
+  func perform(_ transfer: TransferType)
+  func pullback<SubCoordinator: Coordinator>(
+    subCoordinator: SubCoordinator,
+    _ transformer: @escaping (SubCoordinator.RouteType) -> RouteType
+  )
+  func handle(links: [String])
+  func drop(animated: Bool)
+
+  // Router
+  var strongRouter: StrongRouter<RouteType> { get }
+  var unownedRouter: UnownedRouter<RouteType> { get }
 }
 
 // MARK: - Displayable
 
-extension Coordinator {
-  public var viewController: UIViewController {
+public extension Coordinator {
+  var viewController: UIViewController {
     basicViewController
   }
 }
 
 // MARK: - Router
-//extension Coordinator {
-//  public func transfer(to route: RouteType) {
-//    perform(_prepare(to: route))
-//  }
-//}
 
-extension Coordinator {
-  public var strongRouter: StrongRouter<RouteType> {
+public extension Coordinator {
+  var strongRouter: StrongRouter<RouteType> {
     StrongRouter(self)
   }
-  
-  public var unownedRouter: UnownedRouter<RouteType> {
+
+  var unownedRouter: UnownedRouter<RouteType> {
     UnownedRouter(self, erase: { $0.strongRouter })
   }
-  
-  public var weakRouter: WeakRouter<RouteType> {
+
+  var weakRouter: WeakRouter<RouteType> {
     WeakRouter(self, erase: { $0?.strongRouter })
   }
 }
 
-// MARK: - DeepLink
+// MARK: - Coordinator
 
 extension Coordinator {
-  public func handle(links: [String]) {
+  var numOfChildren: Int {
+    children.count
+  }
+
+  func addChild(_ displayable: Displayable) {
+    children.append(displayable)
+    displayable.displayerID = id
+  }
+
+  func removeChild(_ displayable: Displayable) {
+    children.removeAll { $0.viewController === displayable.viewController }
+  }
+
+  func shouldRemove(child: any Displayable, with viewController: UIViewController) -> Bool {
+    if child === viewController { return true }
+
+    if let coordinator = child as? any Coordinator {
+      return coordinator.id == viewController.displayerID && (
+        coordinator.numOfChildren == .some(0) || (
+          coordinator.numOfChildren == .some(1) &&
+            viewController === coordinator.children[0]
+        )
+      )
+    }
+
+    return false
+  }
+}
+
+public extension Coordinator {
+  func handle(links: [String]) {
     guard
       let route = (RouteType.self as? any DeepLinkable.Type)?.init(link: links[0]) as? Self.RouteType
     else { return }

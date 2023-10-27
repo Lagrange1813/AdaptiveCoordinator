@@ -9,25 +9,24 @@ import UIKit
 
 public protocol Displayable: AnyObject, Dumpable {
   var viewController: UIViewController { get }
-  var displayer: (any Coordinator)? { get set }
+  var displayerID: UUID? { get set }
 }
 
 private enum AssociatedKeys {
-  static var coordinator: UInt8 = 0
+  static var id: UInt8 = 0
 }
 
 extension UIViewController: Displayable {
   public var viewController: UIViewController { self }
-  public weak var displayer: (any Coordinator)? {
+  public var displayerID: UUID? {
     get {
-      guard let box = objc_getAssociatedObject(self, &AssociatedKeys.coordinator) as? WeakBoxOfCoordinator else {
+      guard let id = objc_getAssociatedObject(self, &AssociatedKeys.id) as? UUID else {
         return nil
       }
-      return box.value
+      return id
     }
     set(newValue) {
-      let box = WeakBoxOfCoordinator(newValue)
-      objc_setAssociatedObject(self, &AssociatedKeys.coordinator, box, objc_AssociationPolicy.OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+      objc_setAssociatedObject(self, &AssociatedKeys.id, newValue, objc_AssociationPolicy.OBJC_ASSOCIATION_RETAIN_NONATOMIC)
     }
   }
 }

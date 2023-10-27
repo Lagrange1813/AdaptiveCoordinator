@@ -17,7 +17,7 @@ extension UIViewController: Dumpable {
   }
 }
 
-extension BaseCoordinator: Dumpable {
+extension Coordinator {
   public func dump() -> String {
     let prefix = children.isEmpty ? "-" : "▿"
     var res = "\(prefix) \(NSStringFromClass(Self.self))"

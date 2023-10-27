@@ -37,6 +37,6 @@ class NewsInfoViewController: UIViewController {
   }
   
   @objc func backButtonDidTap() {
-    router.transfer(to: .root)
+    router.transfer(to: .list)
   }
 }

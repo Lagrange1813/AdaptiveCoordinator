@@ -11,7 +11,6 @@ import UIKit
 
 enum NewsRoute: Route {
   case list
-  case root
   
   case listRoute(NewsListRoute)
   case detailRoute(NewsDetailRoute)
@@ -24,7 +23,10 @@ enum NewsRoute: Route {
 class NewsCoordinator: SplitCoordinator<NewsRoute> {
   var cancellables = Set<AnyCancellable>()
   
-  init(basicViewController: SplitCoordinator<NewsRoute>.BasicViewControllerType = .init(), initialRoute: NewsRoute) {
+  init(
+    basicViewController: SplitCoordinator<NewsRoute>.BasicViewControllerType = .init(),
+    initialRoute: NewsRoute
+  ) {
     super.init(basicViewController: basicViewController, configure: { svc in
       svc.preferredSplitBehavior = .tile
       svc.preferredDisplayMode = .oneBesideSecondary
@@ -46,13 +48,15 @@ class NewsCoordinator: SplitCoordinator<NewsRoute> {
   override func prepare(to route: NewsRoute) -> SplitTransfer {
     switch route {
     case .list:
-      let coordinator = NewsListCoordinator(basicViewController: basicViewController.primary, initialRoute: .list)
-      pullback(subCoordinator: coordinator) {
-        .listRoute($0)
+      if isInitial {
+        let coordinator = NewsListCoordinator(basicViewController: basicViewController.primary, initialRoute: .list)
+        pullback(subCoordinator: coordinator) {
+          .listRoute($0)
+        }
+        return .primary(.handover(coordinator))
+      } else {
+        return .dimiss()
       }
-      return .primary(.handover(coordinator))
-    case .root:
-      return .dimiss()
       
     // Pull-back
       
@@ -60,9 +64,11 @@ class NewsCoordinator: SplitCoordinator<NewsRoute> {
       switch route {
       case .list:
         return .none
+        
       case .info:
         let viewController = NewsInfoViewController(unownedRouter)
         return .present(viewController)
+        
       case let .detail(str):
         let coordinator = NewsDetailCoordinator(basicViewController: basicViewController.secondary, initialRoute: .detail(str))
         pullback(subCoordinator: coordinator) {
@@ -75,6 +81,7 @@ class NewsCoordinator: SplitCoordinator<NewsRoute> {
       switch route {
       case .detail:
         return .none
+        
       case .info:
         let viewController = NewsInfoViewController(unownedRouter)
         return .present(viewController)

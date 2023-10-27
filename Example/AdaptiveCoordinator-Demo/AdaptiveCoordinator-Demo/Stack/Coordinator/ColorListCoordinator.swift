@@ -47,24 +47,24 @@ class ColorListCoordinator: StackCoordinator<ColorListRoute> {
   
   override init(
     basicViewController: StackCoordinator<ColorListRoute>.BasicViewControllerType = .init(),
-    initialRoute: ColorListRoute,
-    rootRoute: ColorListRoute? = nil
+    initialRoute: ColorListRoute
   ) {
     super.init(
       basicViewController: basicViewController,
-      initialRoute: initialRoute,
-      rootRoute: rootRoute
+      initialRoute: initialRoute
     )
     
     basicViewController.didAddViewController
       .sink { [unowned self] in
         print(dump() + "\n")
-      }.store(in: &cancellables)
+      }
+      .store(in: &cancellables)
     
     basicViewController.didRemoveViewController
       .sink { [unowned self] _ in
         print(dump() + "\n")
-      }.store(in: &cancellables)
+      }
+      .store(in: &cancellables)
   }
   
   override func prepare(to route: ColorListRoute) -> TransferType {
