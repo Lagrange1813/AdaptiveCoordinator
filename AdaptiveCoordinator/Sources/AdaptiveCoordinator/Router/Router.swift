@@ -11,3 +11,7 @@ public protocol Router {
   associatedtype RouteType: Route
   func transfer(to route: RouteType)
 }
+
+public class EmptyRouter<RouteType: Route>: Router {
+  public func transfer(to route: RouteType) {}
+}

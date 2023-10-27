@@ -22,6 +22,10 @@ class ColorMeaningViewController: UIViewController {
     fatalError("init(coder:) has not been implemented")
   }
   
+  deinit {
+    print("ColorMeaningViewController Deinit\n")
+  }
+  
   override func viewDidLoad() {
     super.viewDidLoad()
     configure()

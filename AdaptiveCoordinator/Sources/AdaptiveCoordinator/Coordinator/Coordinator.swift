@@ -67,6 +67,10 @@ extension Coordinator {
   public var unownedRouter: UnownedRouter<RouteType> {
     UnownedRouter(self, erase: { $0.strongRouter })
   }
+  
+  public var weakRouter: WeakRouter<RouteType> {
+    WeakRouter(self, erase: { $0?.strongRouter })
+  }
 }
 
 // MARK: - DeepLink

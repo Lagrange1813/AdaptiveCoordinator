@@ -76,18 +76,22 @@ class ColorListCoordinator: StackCoordinator<ColorListRoute> {
       } else {
         return .backToRoot()
       }
+      
     case let .color(str):
       let coordinator = ColorCoordinator(basicViewController: basicViewController, initialRoute: .color(str))
       pullback(subCoordinator: coordinator) {
         .colorRoute($0)
       }
       return .handover(coordinator)
+      
     case .settings:
       let coordinator = SettingsCoordinator(basicViewController: basicViewController, initialRoute: .list)
       return .handover(coordinator)
+      
     case .info:
       let viewController = InfoViewController(unownedRouter)
       return .present(viewController)
+      
     case let .colorRoute(route):
       switch route {
       case .settings:

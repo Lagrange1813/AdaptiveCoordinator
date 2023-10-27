@@ -20,7 +20,6 @@ public class StackViewController: UINavigationController {
   public lazy var didRemoveViewController =
     _didRemoveViewController
       .eraseToAnyPublisher()
-      .removeDuplicates()
   
   ///
   /// The view controllers that are being popped or dismissed.

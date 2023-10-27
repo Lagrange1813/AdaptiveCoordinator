@@ -5,18 +5,18 @@
 //  Created by Lagrange1813 on 2023/9/2.
 //
 
-import UIKit
-import Combine
 import CasePaths
+import Combine
+import UIKit
 
 open class BaseCoordinator<RouteType: Route, BasicViewControllerType: UIViewController, TransferType: Transfer>: Coordinator {
   public typealias RouteType = RouteType
   public typealias BasicViewControllerType = BasicViewControllerType
   public typealias TransferType = TransferType
   
-  weak public var displayer: (any Coordinator)?
+  public weak var displayer: (any Coordinator)?
   
-  private(set) public var basicViewController: BasicViewControllerType
+  public private(set) var basicViewController: BasicViewControllerType
   public var children = [any Displayable]()
   
   let _forwarder = PassthroughSubject<RouteType, Never>()
@@ -30,10 +30,12 @@ open class BaseCoordinator<RouteType: Route, BasicViewControllerType: UIViewCont
     transfer(to: initialRoute)
   }
   
+  @MainActor
   public func _prepare(to route: RouteType) -> TransferType {
     fatalError()
   }
   
+  @MainActor
   public func perform(_ transfer: TransferType) {
     fatalError()
   }
@@ -49,6 +51,7 @@ open class BaseCoordinator<RouteType: Route, BasicViewControllerType: UIViewCont
     )
   }
   
+  @MainActor
   public func drop(animated: Bool = true) {
     for child in children {
       if let coordinator = child as? any Coordinator {
@@ -59,20 +62,22 @@ open class BaseCoordinator<RouteType: Route, BasicViewControllerType: UIViewCont
   }
 }
 
-extension BaseCoordinator {
-  public func transfer(to route: RouteType) {
+public extension BaseCoordinator {
+  func transfer(to route: RouteType) {
     _forwarder.send(route)
   }
   
   fileprivate func _addSubscriber() {
     forwarder
-      .sink { [unowned self] in
-        perform(_prepare(to: $0))
+      .sink { [unowned self] route in
+        Task {
+          await perform(_prepare(to: route))
+        }
       }
       .store(in: &_cancellables)
   }
   
-  public func pullback<SubCoordinator: Coordinator>(
+  func pullback<SubCoordinator: Coordinator>(
     subCoordinator: SubCoordinator,
     _ transformer: @escaping (SubCoordinator.RouteType) -> RouteType
   ) {

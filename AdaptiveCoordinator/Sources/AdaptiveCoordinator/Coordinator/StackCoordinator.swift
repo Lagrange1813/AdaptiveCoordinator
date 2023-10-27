@@ -23,7 +23,7 @@ open class StackCoordinator<RouteType: Route>: BaseCoordinator<RouteType, StackV
     currentRoute = initialRoute
     self.rootRoute = rootRoute ?? initialRoute
     super.init(basicViewController: basicViewController, initialRoute: self.rootRoute)
-    isInitial = false
+//    isInitial = false
     if rootRoute != nil {
       transfer(to: initialRoute)
     }
@@ -44,6 +44,7 @@ open class StackCoordinator<RouteType: Route>: BaseCoordinator<RouteType, StackV
       }.store(in: &_cancellables)
   }
   
+  @MainActor
   open func prepare(to route: RouteType) -> StackTransfer {
     fatalError("Please override the \(#function) method.")
   }
