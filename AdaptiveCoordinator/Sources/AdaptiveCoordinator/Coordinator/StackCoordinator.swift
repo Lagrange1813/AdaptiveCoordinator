@@ -105,6 +105,11 @@ public extension StackCoordinator {
       basicViewController.dismiss(animated: animated)
       isPresenting = false
       
+    case let .set(viewControllers):
+      drop(animated: false)
+      basicViewController.set(viewControllers)
+      viewControllers.forEach { addChild($0) }
+      
     case let .backToRoot(animated):
       if isPresenting {
         perform(.dimiss(animated))
@@ -141,6 +146,5 @@ public extension StackCoordinator {
       }
     }
     perform(.pop(animated))
-    print("Drop: \(String(describing: type(of: self)))")
   }
 }

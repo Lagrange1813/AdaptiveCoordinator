@@ -8,20 +8,6 @@
 import Combine
 import UIKit
 
-public class InternalStackViewController: StackViewController {
-  func set(_ viewController: UIViewController, completion: VoidHandler? = nil) {
-    let removedViewControllers = viewControllers
-    viewControllers = [viewController]
-    DispatchQueue.main.async { [unowned self] in
-      if !removedViewControllers.isEmpty {
-        _didRemoveViewController.send(removedViewControllers)
-      }
-      _didAddViewController.send()
-      completion?()
-    }
-  }
-}
-
 public class SplitViewController: UISplitViewController {
   private var _didAddViewController = PassthroughSubject<Void, Never>()
   private var _didRemoveViewController = PassthroughSubject<[UIViewController], Never>()
@@ -29,9 +15,9 @@ public class SplitViewController: UISplitViewController {
   public lazy var didAddViewController = _didAddViewController.eraseToAnyPublisher()
   public lazy var didRemoveViewController = _didRemoveViewController.eraseToAnyPublisher()
   
-  public lazy var primary = InternalStackViewController()
-  public lazy var secondary = InternalStackViewController()
-  public lazy var compact = InternalStackViewController()
+  public lazy var primary = StackViewController()
+  public lazy var secondary = StackViewController()
+  public lazy var compact = StackViewController()
   
   private var removingViewController: UIViewController?
   

@@ -25,7 +25,6 @@ public class StackViewController: UINavigationController {
   /// The view controllers that are being popped or dismissed.
   ///
   private var removingViewControllers = Deque<UIViewController>()
-//  private var queuing = Set<UIViewController>()
   
   /// https://stackoverflow.com/questions/12904410/completion-block-for-popviewcontroller
   private func executeAfterTransition(animated: Bool, completion: @escaping VoidHandler) {
@@ -115,6 +114,18 @@ public extension StackViewController {
         self?._didRemoveViewController.send([viewController])
         completion?()
       }
+    }
+  }
+  
+  func set(_ viewControllers: [UIViewController], completion: VoidHandler? = nil) {
+    let removedViewControllers = self.viewControllers
+    self.viewControllers = viewControllers
+    DispatchQueue.main.async { [weak self] in
+      if !removedViewControllers.isEmpty {
+        self?._didRemoveViewController.send(removedViewControllers)
+      }
+      self?._didAddViewController.send()
+      completion?()
     }
   }
 }

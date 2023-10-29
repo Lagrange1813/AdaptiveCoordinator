@@ -17,6 +17,7 @@ public enum StackTransfer: Transfer {
   case pop(Bool = true)
   case present(UIViewController, Bool = true)
   case dimiss(Bool = true)
+  case set([UIViewController])
   case backToRoot(Bool = true)
   case handover(any Coordinator)
   case none
@@ -26,7 +27,7 @@ public enum SplitTransfer: Transfer {
   public enum TransferType {
     case push(UIViewController, Bool = true)
     case pop(Bool = true)
-    case set(UIViewController)
+    case set([UIViewController])
     case backToRoot(Bool = true)
     case handover(any Coordinator)
   }
@@ -38,18 +39,3 @@ public enum SplitTransfer: Transfer {
   case dimiss(Bool = true)
   case none
 }
-
-//public protocol _Transfer {}
-//
-//public struct _SplitTransferInfo: _Transfer {
-//  enum _SplitTransferType {
-//    case primary
-//    case secondary
-//    case supplmentary
-//    case none
-//  }
-//  
-//  let type: _SplitTransferType
-//  let viewController: UIViewController? = nil
-//  let animated: Bool = true
-//}

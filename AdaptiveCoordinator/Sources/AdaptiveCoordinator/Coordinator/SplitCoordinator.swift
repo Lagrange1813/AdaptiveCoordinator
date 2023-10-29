@@ -126,7 +126,7 @@ public extension SplitCoordinator {
 }
 
 extension SplitCoordinator {
-  func targetStack(of transfer: SplitTransfer) -> InternalStackViewController? {
+  func targetStack(of transfer: SplitTransfer) -> StackViewController? {
     switch transfer {
     case .primary:
       basicViewController.primary
@@ -139,7 +139,7 @@ extension SplitCoordinator {
     }
   }
   
-  func handle(type: SplitTransfer.TransferType, in stack: InternalStackViewController?) {
+  func handle(type: SplitTransfer.TransferType, in stack: StackViewController?) {
     switch type {
     case let .push(viewController, animated):
       stack?.push(viewController, animated: animated)
@@ -148,9 +148,9 @@ extension SplitCoordinator {
     case let .pop(animated):
       stack?.pop(animated: animated)
       
-    case let .set(viewController):
-      stack?.set(viewController)
-      addChild(viewController)
+    case let .set(viewControllers):
+      stack?.set(viewControllers)
+      viewControllers.forEach { addChild($0) }
       
     case .backToRoot:
       break

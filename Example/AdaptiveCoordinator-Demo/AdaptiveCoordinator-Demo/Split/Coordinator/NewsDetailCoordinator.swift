@@ -19,7 +19,7 @@ class NewsDetailCoordinator: StackCoordinator<NewsDetailRoute> {
     switch route {
     case .detail(let str):
       let viewController = NewsDetailViewController(str)
-      return .push(viewController)
+      return .set([viewController])
     case .info:
       return .none
     }

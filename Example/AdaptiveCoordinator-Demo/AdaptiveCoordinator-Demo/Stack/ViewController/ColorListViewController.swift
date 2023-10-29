@@ -9,12 +9,14 @@ import AdaptiveCoordinator
 import UIKit
 
 class ColorListViewController: UIViewController {
+  let level: Int
   let router: UnownedRouter<ColorListRoute>
   
   let colors = ["Red", "Orange", "Yellow", "Green", "Blue", "Indigo", "Violet"]
   lazy var tableView = UITableView()
   
-  init(_ router: UnownedRouter<ColorListRoute>) {
+  init(level: Int, _ router: UnownedRouter<ColorListRoute>) {
+    self.level = level
     self.router = router
     super.init(nibName: nil, bundle: nil)
   }
@@ -35,17 +37,20 @@ class ColorListViewController: UIViewController {
   
   func configure() {
     view.backgroundColor = .white
-    title = "Palette"
+    title = "Palette \(level)"
     
     let infoButton = UIBarButtonItem(title: "Info", primaryAction: UIAction { [unowned self] _ in
       router.transfer(to: .info)
     })
     navigationItem.leftBarButtonItem = infoButton
     
+    let recursiveButton = UIBarButtonItem(title: "Recursive", primaryAction: UIAction { [unowned self] _ in
+      router.transfer(to: .newList)
+    })
     let settingsButton = UIBarButtonItem(title: "Settings", primaryAction: UIAction { [unowned self] _ in
       router.transfer(to: .settings)
     })
-    navigationItem.rightBarButtonItem = settingsButton
+    navigationItem.rightBarButtonItems = [settingsButton, recursiveButton]
     
     tableView.delegate = self
     tableView.dataSource = self

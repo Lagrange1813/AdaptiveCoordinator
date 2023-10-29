@@ -11,7 +11,7 @@ import UIKit
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
   var window: UIWindow?
 
-//  let coordinator = ColorListCoordinator(initialRoute: .list)
+//  let coordinator = ColorListCoordinator(isRoot: true, level: 0, initialRoute: .list)
   let coordinator = NewsCoordinator(initialRoute: .list)
 
   func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
