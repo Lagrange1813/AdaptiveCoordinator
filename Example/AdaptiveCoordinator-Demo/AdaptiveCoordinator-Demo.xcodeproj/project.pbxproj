@@ -26,6 +26,7 @@
 		20C76C5D2AAAC8BD00D081BF /* NewsDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20C76C5C2AAAC8BD00D081BF /* NewsDetailViewController.swift */; };
 		20C76C5F2AAAC93600D081BF /* NewsDayListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20C76C5E2AAAC93600D081BF /* NewsDayListViewController.swift */; };
 		20C76C612AAC982200D081BF /* NewsInfoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20C76C602AAC982200D081BF /* NewsInfoViewController.swift */; };
+		20E8C9B32AF25E46007F6F92 /* AdaptiveCoordinator in Frameworks */ = {isa = PBXBuildFile; productRef = 20E8C9B22AF25E46007F6F92 /* AdaptiveCoordinator */; };
 		20F6FCB72AE43F1A00112F48 /* NewsDetailCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20F6FCB62AE43F1A00112F48 /* NewsDetailCoordinator.swift */; };
 		20F6FCB92AE441B500112F48 /* NewsListCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20F6FCB82AE441B500112F48 /* NewsListCoordinator.swift */; };
 /* End PBXBuildFile section */
@@ -61,6 +62,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				203ECC4B2AA3618400DA7A6D /* AdaptiveCoordinator in Frameworks */,
+				20E8C9B32AF25E46007F6F92 /* AdaptiveCoordinator in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -177,6 +179,7 @@
 			name = "AdaptiveCoordinator-Demo";
 			packageProductDependencies = (
 				203ECC4A2AA3618400DA7A6D /* AdaptiveCoordinator */,
+				20E8C9B22AF25E46007F6F92 /* AdaptiveCoordinator */,
 			);
 			productName = "AdaptiveCoordinator-Demo";
 			productReference = 203ECC322AA3609600DA7A6D /* AdaptiveCoordinator-Demo.app */;
@@ -207,7 +210,7 @@
 			);
 			mainGroup = 203ECC292AA3609600DA7A6D;
 			packageReferences = (
-				203ECC492AA3618400DA7A6D /* XCLocalSwiftPackageReference "../../AdaptiveCoordinator" */,
+				20E8C9B12AF25E46007F6F92 /* XCLocalSwiftPackageReference "../.." */,
 			);
 			productRefGroup = 203ECC332AA3609600DA7A6D /* Products */;
 			projectDirPath = "";
@@ -475,14 +478,18 @@
 /* End XCConfigurationList section */
 
 /* Begin XCLocalSwiftPackageReference section */
-		203ECC492AA3618400DA7A6D /* XCLocalSwiftPackageReference "../../AdaptiveCoordinator" */ = {
+		20E8C9B12AF25E46007F6F92 /* XCLocalSwiftPackageReference "../.." */ = {
 			isa = XCLocalSwiftPackageReference;
-			relativePath = ../../AdaptiveCoordinator;
+			relativePath = ../..;
 		};
 /* End XCLocalSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
 		203ECC4A2AA3618400DA7A6D /* AdaptiveCoordinator */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = AdaptiveCoordinator;
+		};
+		20E8C9B22AF25E46007F6F92 /* AdaptiveCoordinator */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = AdaptiveCoordinator;
 		};
