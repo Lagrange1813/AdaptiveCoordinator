@@ -8,6 +8,12 @@
 import Combine
 import UIKit
 
+public enum ActionType<TransferType: Transfer, RouteType: Route> {
+  case transfer(TransferType)
+  case send(RouteType)
+  case none
+}
+
 public protocol Coordinator: Displayable, Router, Dumpable {
   // Type
   associatedtype BasicViewControllerType: UIViewController

@@ -78,41 +78,39 @@ class ColorListCoordinator: StackCoordinator<ColorListRoute> {
     }
   }
   
-  override func prepare(to route: ColorListRoute) -> TransferType {
+  override func prepare(to route: ColorListRoute) -> ActionType<TransferType, ColorListRoute> {
     switch route {
     case .list:
       if isInitial {
         let viewController = ColorListViewController(level: level, unownedRouter)
-        return .push(viewController)
+        return .transfer(.push(viewController))
       } else {
-        return .backToRoot()
+        return .transfer(.backToRoot())
       }
       
     case .newList:
       let coordinator = ColorListCoordinator(level: level + 1, basicViewController: basicViewController, initialRoute: .list)
-      pullback(subCoordinator: coordinator, { .newListRoute($0) })
-      return .handover(coordinator)
+      pullback(subCoordinator: coordinator) { .newListRoute($0) }
+      return .transfer(.handover(coordinator))
       
     case let .color(str):
       let coordinator = ColorCoordinator(basicViewController: basicViewController, initialRoute: .color(str))
       pullback(subCoordinator: coordinator) {
         .colorRoute($0)
       }
-      return .handover(coordinator)
+      return .transfer(.handover(coordinator))
       
     case .settings:
       let coordinator = SettingsCoordinator(basicViewController: basicViewController, initialRoute: .list(true))
-      return .handover(coordinator)
+      return .transfer(.handover(coordinator))
       
     case .info:
       let viewController = InfoViewController(unownedRouter)
-      return .present(viewController)
+      return .transfer(.present(viewController))
       
     case let .newListRoute(route):
       if case let .colorRoute(colorRoute) = route {
-        print("Resend")
-        _forwarder.send(.colorRoute(colorRoute))
-        return .none
+        return .send(.colorRoute(colorRoute))
       }
       return .none
       
@@ -123,7 +121,7 @@ class ColorListCoordinator: StackCoordinator<ColorListRoute> {
           drop(animated: false)
           // or use `return prepare(to: .settings)`
           let coordinator = SettingsCoordinator(basicViewController: basicViewController, initialRoute: .list(false))
-          return .handover(coordinator)
+          return .transfer(.handover(coordinator))
 
         case .general:
           print("General")

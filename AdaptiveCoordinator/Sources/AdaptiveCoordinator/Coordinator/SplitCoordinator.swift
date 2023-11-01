@@ -18,9 +18,9 @@ open class SplitCoordinator<RouteType: Route>: Coordinator {
   public let id: UUID
   public private(set) var basicViewController: BasicViewControllerType
   public var children = [any Displayable]()
-  public let _forwarder = PassthroughSubject<RouteType, Never>()
+  private let _forwarder = PassthroughSubject<RouteType, Never>()
   public lazy var forwarder: AnyPublisher<RouteType, Never> = _forwarder.eraseToAnyPublisher()
-  public var _cancellables = Set<AnyCancellable>()
+  private var _cancellables = Set<AnyCancellable>()
   
   public private(set) var isInitial: Bool = true
   
@@ -40,7 +40,17 @@ open class SplitCoordinator<RouteType: Route>: Coordinator {
     forwarder
       .sink { [unowned self] route in
         Task {
-          await perform(_prepare(to: route))
+          let action = await prepare(to: route)
+          
+          switch action {
+          case let .transfer(transferType):
+            await perform(transferType)
+          case let .send(routeType):
+            _forwarder.send(routeType)
+          case .none:
+            break
+          }
+          
           if isInitial {
             isInitial = false
           }
@@ -65,14 +75,8 @@ open class SplitCoordinator<RouteType: Route>: Coordinator {
   }
   
   @MainActor
-  open func prepare(to route: RouteType) -> SplitTransfer {
+  open func prepare(to route: RouteType) -> ActionType<TransferType, RouteType> {
     fatalError("Please override the \(#function) method.")
-  }
-  
-  @MainActor
-  public func _prepare(to route: RouteType) -> SplitTransfer {
-    let transfer = prepare(to: route)
-    return transfer
   }
 }
 

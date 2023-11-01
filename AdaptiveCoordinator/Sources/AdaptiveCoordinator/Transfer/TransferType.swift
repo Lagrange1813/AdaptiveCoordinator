@@ -20,7 +20,6 @@ public enum StackTransfer: Transfer {
   case set([UIViewController])
   case backToRoot(Bool = true)
   case handover(any Coordinator)
-  case none
 }
 
 public enum SplitTransfer: Transfer {

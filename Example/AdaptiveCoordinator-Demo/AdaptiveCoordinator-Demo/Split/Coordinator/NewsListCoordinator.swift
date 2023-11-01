@@ -16,11 +16,11 @@ enum NewsListRoute: Route {
 }
 
 class NewsListCoordinator: StackCoordinator<NewsListRoute> {
-  override func prepare(to route: NewsListRoute) -> StackTransfer {
+  override func prepare(to route: NewsListRoute) -> ActionType<StackTransfer, NewsListRoute> {
     switch route {
     case .list:
       let viewController = NewsListViewController(unownedRouter)
-      return .push(viewController)
+      return .transfer(.push(viewController))
     case .info:
       return .none
     case .detail:

@@ -45,7 +45,7 @@ class NewsCoordinator: SplitCoordinator<NewsRoute> {
       .store(in: &cancellables)
   }
   
-  override func prepare(to route: NewsRoute) -> SplitTransfer {
+  override func prepare(to route: NewsRoute) -> ActionType<SplitTransfer, NewsRoute> {
     switch route {
     case .list:
       if isInitial {
@@ -53,9 +53,9 @@ class NewsCoordinator: SplitCoordinator<NewsRoute> {
         pullback(subCoordinator: coordinator) {
           .listRoute($0)
         }
-        return .primary(.handover(coordinator))
+        return .transfer(.primary(.handover(coordinator)))
       } else {
-        return .dimiss()
+        return .transfer(.dimiss())
       }
       
     // Pull-back
@@ -67,14 +67,14 @@ class NewsCoordinator: SplitCoordinator<NewsRoute> {
         
       case .info:
         let viewController = NewsInfoViewController(unownedRouter)
-        return .present(viewController)
+        return .transfer(.present(viewController))
         
       case let .detail(str):
         let coordinator = NewsDetailCoordinator(basicViewController: basicViewController.secondary, initialRoute: .detail(str))
         pullback(subCoordinator: coordinator) {
           .detailRoute($0)
         }
-        return .secondary(.handover(coordinator))
+        return .transfer(.secondary(.handover(coordinator)))
       }
       
     case let .detailRoute(route):
@@ -84,7 +84,7 @@ class NewsCoordinator: SplitCoordinator<NewsRoute> {
         
       case .info:
         let viewController = NewsInfoViewController(unownedRouter)
-        return .present(viewController)
+        return .transfer(.present(viewController))
       }
     }
   }

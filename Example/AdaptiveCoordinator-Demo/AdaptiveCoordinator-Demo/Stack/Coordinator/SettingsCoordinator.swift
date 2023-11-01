@@ -15,21 +15,21 @@ enum SettingsRoute: Route {
 }
 
 class SettingsCoordinator: StackCoordinator<SettingsRoute> {
-  override func prepare(to route: SettingsRoute) -> TransferType {
+  override func prepare(to route: SettingsRoute) -> ActionType<TransferType, SettingsRoute> {
     switch route {
     case let .list(animated):
       if isInitial {
         let viewController = SettingsViewController(unownedRouter)
-        return .push(viewController, animated)
+        return .transfer(.push(viewController, animated))
       } else {
-        return .backToRoot()
+        return .transfer(.backToRoot())
       }
     case .general:
       let viewController = UIHostingController { GeneralView() }
-      return .push(viewController)
+      return .transfer(.push(viewController))
     case .about:
       let viewController = UIHostingController { AboutView() }
-      return .push(viewController)
+      return .transfer(.push(viewController))
     }
   }
 }

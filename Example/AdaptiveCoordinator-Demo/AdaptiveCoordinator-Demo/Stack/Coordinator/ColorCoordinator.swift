@@ -34,20 +34,20 @@ enum ColorRoute: Route, DeepLinkable {
 }
 
 class ColorCoordinator: StackCoordinator<ColorRoute> {
-  override func prepare(to route: ColorRoute) -> TransferType {
+  override func prepare(to route: ColorRoute) -> ActionType<TransferType, ColorRoute> {
     switch route {
     case .color(let str):
       if isInitial {
         let viewController = ColorViewController(router: unownedRouter, color: str)
-        return .push(viewController)
+        return .transfer(.push(viewController))
       } else {
-        return .backToRoot()
+        return .transfer(.backToRoot())
       }
     case .meaning(let str):
       let viewController = ColorMeaningViewController(router: unownedRouter, meaning: str)
-      return .push(viewController)
+      return .transfer(.push(viewController))
     case .colors:
-      return .pop()
+      return .transfer(.pop())
     case .settings:
       return .none
     case .general:
