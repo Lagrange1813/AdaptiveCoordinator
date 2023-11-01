@@ -16,19 +16,14 @@ let package = Package(
   ],
   dependencies: [
     .package(
-      url: "https://github.com/pointfreeco/swift-case-paths.git",
-      .upToNextMajor(from: "1.0.0")
-    ),
-    .package(
       url: "https://github.com/apple/swift-collections.git",
-      .upToNextMinor(from: "1.0.5") // or `.upToNextMajor
+      .upToNextMinor(from: "1.0.5")
     ),
   ],
   targets: [
     .target(
       name: "AdaptiveCoordinator",
       dependencies: [
-        .product(name: "CasePaths", package: "swift-case-paths"),
         .product(name: "Collections", package: "swift-collections")
       ]
     ),
