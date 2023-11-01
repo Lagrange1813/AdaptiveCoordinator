@@ -5,13 +5,13 @@
 //  Created by Lagrange1813 on 2023/9/8.
 //
 
-import UIKit
 import AdaptiveCoordinator
 import SwiftUI
+import UIKit
 
 class NewsListViewController: UIHostingController<NewsList> {
   let router: UnownedRouter<NewsListRoute>
-  
+
   init(_ router: UnownedRouter<NewsListRoute>) {
     self.router = router
     super.init(rootView: NewsList(router: router))
@@ -21,19 +21,20 @@ class NewsListViewController: UIHostingController<NewsList> {
   func configure() {
     title = "News"
   }
-  
-  @MainActor required dynamic init?(coder aDecoder: NSCoder) {
+
+  @available(*, unavailable)
+  @MainActor dynamic required init?(coder aDecoder: NSCoder) {
     fatalError("init(coder:) has not been implemented")
   }
 }
 
 struct NewsList: View {
   let router: UnownedRouter<NewsListRoute>
-  
+
   var body: some View {
     List {
-      ForEach(0..<10) { index in
-        Button{
+      ForEach(0 ..< 10) { index in
+        Button {
           router.transfer(to: .detail("News \(index)"))
         } label: {
           Text("News \(index)")

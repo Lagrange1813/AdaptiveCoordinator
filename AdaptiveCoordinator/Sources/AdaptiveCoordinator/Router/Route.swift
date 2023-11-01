@@ -9,11 +9,7 @@ import Foundation
 
 ///
 /// The protocol your routes should confirm to.
-/// 
+///
 /// - It should be enum type.
 ///
 public protocol Route {}
-
-//extension Route {
-//  init?(deeplink: String) { return nil }
-//}

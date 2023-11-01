@@ -72,8 +72,4 @@ final class StackViewControllerTests: XCTestCase {
     
     wait(for: [expectation], timeout: 1.0)
   }
-  
-  func test() {
-    
-  }
 }

@@ -5,8 +5,8 @@
 //  Created by Lagrange1813 on 2023/9/8.
 //
 
-import UIKit
 import AdaptiveCoordinator
+import UIKit
 
 class NewsDetailViewController: UIViewController {
   let news: String
@@ -17,6 +17,7 @@ class NewsDetailViewController: UIViewController {
     configure()
   }
   
+  @available(*, unavailable)
   required init?(coder: NSCoder) {
     fatalError("init(coder:) has not been implemented")
   }

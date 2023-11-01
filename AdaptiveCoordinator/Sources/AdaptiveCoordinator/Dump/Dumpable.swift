@@ -17,8 +17,8 @@ extension UIViewController: Dumpable {
   }
 }
 
-extension Coordinator {
-  public func dump() -> String {
+public extension Coordinator {
+  func dump() -> String {
     let prefix = children.isEmpty ? "-" : "▿"
     var res = "\(prefix) \(NSStringFromClass(Self.self))"
     let sub = children.reduce("") { r, n in

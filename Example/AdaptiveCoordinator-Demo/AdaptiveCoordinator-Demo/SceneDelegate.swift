@@ -11,8 +11,8 @@ import UIKit
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
   var window: UIWindow?
 
-//  let coordinator = ColorListCoordinator(isRoot: true, level: 0, initialRoute: .list)
-  let coordinator = NewsCoordinator(initialRoute: .list)
+  let coordinator = ColorListCoordinator(isRoot: true, level: 0, initialRoute: .list)
+//  let coordinator = NewsCoordinator(initialRoute: .list)
 
   func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
     // Use this method to optionally configure and attach the UIWindow `window` to the provided UIWindowScene `scene`.

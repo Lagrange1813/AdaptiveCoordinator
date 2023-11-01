@@ -11,9 +11,8 @@ extension String {
   func indenting(by count: Int) -> String {
     self.indenting(with: String(repeating: " ", count: count))
   }
-  
+
   func indenting(with prefix: String) -> String {
     prefix.isEmpty ? self : "\(self.replacingOccurrences(of: "\n", with: "\n\(prefix)"))"
   }
 }
-

@@ -30,7 +30,7 @@ public enum SplitTransfer: Transfer {
     case backToRoot(Bool = true)
     case handover(any Coordinator)
   }
-  
+
   case primary(TransferType)
   case secondary(TransferType)
   case supplmentary(TransferType)

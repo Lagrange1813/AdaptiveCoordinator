@@ -5,13 +5,13 @@
 //  Created by Lagrange1813 on 2023/9/2.
 //
 
+import AdaptiveCoordinator
 import SwiftUI
 import UIKit
-import AdaptiveCoordinator
 
 class SettingsViewController: UIHostingController<SettingsView> {
   let router: UnownedRouter<SettingsRoute>
-  
+
   init(_ router: UnownedRouter<SettingsRoute>) {
     self.router = router
     super.init(rootView: SettingsView(router: router))
@@ -26,7 +26,7 @@ class SettingsViewController: UIHostingController<SettingsView> {
 
 struct SettingsView: View {
   let router: UnownedRouter<SettingsRoute>
-  
+
   var body: some View {
     List {
       Section(header: Text("General")) {

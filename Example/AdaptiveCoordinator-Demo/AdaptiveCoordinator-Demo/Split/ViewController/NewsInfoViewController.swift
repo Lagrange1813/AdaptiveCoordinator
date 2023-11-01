@@ -5,8 +5,8 @@
 //  Created by Lagrange1813 on 2023/9/9.
 //
 
-import UIKit
 import AdaptiveCoordinator
+import UIKit
 
 class NewsInfoViewController: UIViewController {
   let router: UnownedRouter<NewsRoute>
@@ -17,6 +17,7 @@ class NewsInfoViewController: UIViewController {
     configure()
   }
   
+  @available(*, unavailable)
   required init?(coder: NSCoder) {
     fatalError("init(coder:) has not been implemented")
   }

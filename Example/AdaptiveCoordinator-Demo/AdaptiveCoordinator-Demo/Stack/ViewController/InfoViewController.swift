@@ -5,8 +5,8 @@
 //  Created by Lagrange1813 on 2023/9/7.
 //
 
-import UIKit
 import AdaptiveCoordinator
+import UIKit
 
 class InfoViewController: UIViewController {
   let router: UnownedRouter<ColorListRoute>
@@ -16,6 +16,7 @@ class InfoViewController: UIViewController {
     super.init(nibName: nil, bundle: nil)
   }
   
+  @available(*, unavailable)
   required init?(coder: NSCoder) {
     fatalError("init(coder:) has not been implemented")
   }

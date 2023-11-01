@@ -5,8 +5,8 @@
 //  Created by Lagrange1813 on 2023/9/3.
 //
 
-import UIKit
 import AdaptiveCoordinator
+import UIKit
 
 class ColorViewController: UIViewController {
   let router: UnownedRouter<ColorRoute>

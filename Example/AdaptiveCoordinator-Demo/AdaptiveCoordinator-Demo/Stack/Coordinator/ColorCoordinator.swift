@@ -14,11 +14,11 @@ enum ColorRoute: Route, DeepLinkable {
   case colors
   case settings
   case general
-  
+
   init?(link: String) {
     self.init(link)
   }
-  
+
   init?(_ str: String) {
     if str.starts(with: "meaning") {
       let components = str.components(separatedBy: ":")
