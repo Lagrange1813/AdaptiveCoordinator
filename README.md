@@ -1,6 +1,12 @@
 # AdaptiveCoordinator
 
-Getting Started
+AdaptiveCoordinator is a navigation library for mixed use of UIKit and SwiftUI.
+[Chinese Documentation](README.cn.md)
+
+- [Basic Usage](#basic-usage)
+- [Advanced Usage](#advanced-usage)
+
+Basic Usage
 ---
 
 First, you need to create an enumeration that includes all nodes that can be reached from the current node, as well as the current node itself. Typically, these nodes represent either a `UIViewController` or a `SwiftUI` view wrapped by `UIHostingController`.
@@ -87,3 +93,74 @@ class ColorListViewController: UIViewController {
   }
 }
 ```
+
+Advanced Usage
+---
+
+After mastering the basic functions, we offer a series of advanced tools to enhance your navigation experience.
+
+### `pullback` Method
+
+When an application only needs to display one view at a time, all navigation actions can be viewed as descending or ascending operations on a view tree. You can start from the root node and delve deeper layer by layer until you reach the leaf node. We have introduced how to use basic methods to navigate within a single level of the tree, such as entering a child node or returning to the parent node. However, these basic operations are insufficient when dealing with scenarios involving `UISplitViewController`, or when it is necessary to display and manage multiple view controllers simultaneously.
+
+For this reason, we provide the `pullback` method —— inspired by the highly acclaimed [The Composable Architecture](https://github.com/pointfreeco/swift-composable-architecture). In simple terms, it allows you to listen to events from a child coordinator (`Coordinator`). If a child coordinator cannot handle a given navigation action, the parent coordinator can listen and respond to the action accordingly.
+
+For example, when using `SplitCoordinator` and `SplitViewController`, navigation within the `Primary Column / Master` is handled by a `StackCoordinator`. If a view needs to be displayed in the `Secondary Column / Detail`, and this task cannot be directly managed by the `StackCoordinator` in the `Primary Column`, we can listen to the `StackCoordinator` events in the `SplitCoordinator` and `transfer` or `handover` them to the `StackCoordinator` located in the `Secondary Column / Detail` for processing.
+
+```swift
+enum NewsRoute: Route {
+  case list
+  case listRoute(NewsListRoute)
+  case detailRoute(NewsDetailRoute)
+}
+
+class NewsCoordinator: SplitCoordinator<NewsRoute> {
+  init( ... ) { ... }
+  
+  override func prepare(to route: NewsRoute) -> ActionType<SplitTransfer, NewsRoute> {
+    switch route {
+    case .list:
+      if isInitial {
+        let coordinator = NewsListCoordinator(basicViewController: basicViewController.primary, initialRoute: .list)
+        pullback(subCoordinator: coordinator) {
+          .listRoute($0)
+        }
+        return .transfer(.primary(.handover(coordinator)))
+      } else {
+        return .transfer(.dismiss())
+      }
+      
+    // Pull-back
+    
+    case let .listRoute(route):
+      switch route {
+      case .list:
+        return .none
+        
+      case .info:
+        let viewController = NewsInfoViewController(unownedRouter)
+        return .transfer(.present(viewController))
+        
+      case let .detail(str):
+        let coordinator = NewsDetailCoordinator(basicViewController: basicViewController.secondary, initialRoute: .detail(str))
+        pullback(subCoordinator: coordinator) {
+          .detailRoute($0)
+        }
+        return .transfer(.secondary(.handover(coordinator)))
+      }
+      
+    case let .detailRoute(route):
+      switch route {
+      case .detail:
+        return .none
+        
+      case .info:
+        let viewController = NewsInfoViewController(unownedRouter)
+        return .transfer(.present(viewController))
+      }
+    }
+  }
+}
+```
+
+In the code above, we first define `listRoute` and `detailRoute` in `NewsRoute` to distinguish and convert events during subscription. Then, when creating instances of `NewsListCoordinator` and `NewsDetailCoordinator`, we used the `pullback` method and passed closures to specify how to convert events. Thus, when `NewsListCoordinator` receives an event to navigate to `info` or `detail`, the `NewsCoordinator` will also be notified and processed in the `case let .listRoute(route):` block.
