@@ -164,3 +164,53 @@ class NewsCoordinator: SplitCoordinator<NewsRoute> {
 ```
 
 In the code above, we first define `listRoute` and `detailRoute` in `NewsRoute` to distinguish and convert events during subscription. Then, when creating instances of `NewsListCoordinator` and `NewsDetailCoordinator`, we used the `pullback` method and passed closures to specify how to convert events. Thus, when `NewsListCoordinator` receives an event to navigate to `info` or `detail`, the `NewsCoordinator` will also be notified and processed in the `case let .listRoute(route):` block.
+
+### `drop` Method
+
+Within our framework, we have implemented a basic mechanism for the automatic disposal of `Coordinator` objects that are no longer needed. However, when dealing with complex multilevel structures, relying on this automatic disposal mechanism can pose problems. Therefore, we recommend using the `drop` method to explicitly manage the recycling of the view tree when there is a need to reset a large number of view levels (for example, to remove an entire navigation branch). This method performs a post-order traversal of the view tree, releasing the corresponding view controllers or `UIHostingController` at each level.
+
+```swift
+case let .colorRoute(route):
+  switch route {
+    case .settings:
+      drop(animated: false)
+      // or use `return prepare(to: .settings)`
+      let coordinator = SettingsCoordinator(basicViewController: basicViewController, initialRoute: .list(false))
+      return .transfer(.handover(coordinator))
+```
+
+For instance, in the code above, we manually invoke the `drop` method to reset the child view nodes of the current `StackCoordinator` before initiating the `SettingsCoordinator` to carry out the subsequent operation. This approach allows us to switch the entire view branch securely and in one go.
+
+### `handle` Method
+
+Complementing the `drop` method, we also provide a `handle` method that enables one-time navigation to a deep-level view, also known as "deeplinking." When you need to navigate to a deep view in one step, you can directly provide the appropriate `route` and `prepare` methods at a higher-level view node to simplify the pushing of the deep view. If you need to build intermediate views at the same time, you can implement the `deeplinkable` protocol at each level and invoke the `handle` method at the top level. Consequently, the framework will construct the respective `Coordinator` layer by layer, based on the provided methods, and recursively call the `handle` method to complete the navigation to the deep view.
+
+### Re-sending
+
+Consider a scenario where we need to navigate recursively to a view, but we want the root view node to handle the navigation request, not the node that first received the event. In such cases, we might consider using `pullback` to subscribe to events from a child `Coordinator`. But what if the hierarchy is not fixed? At this juncture, we can return `.send(<RouteType>)` within the `prepare` method for event re-sending, which is equivalent to the `Coordinator` directly receiving the navigation request for that `RouteType`. By re-sending events, we can transform and recursively propagate navigation requests from non-root view nodes.
+
+```swift
+case let .newListRoute(route):
+  if case let .colorRoute(colorRoute) = route {
+    return .send(.colorRoute(colorRoute))
+  }
+  return .none
+      
+case let .colorRoute(route):
+  if isRoot {
+    switch route {
+    case .settings:
+      drop(animated: false)
+      // or use `return prepare(to: .settings)`
+      let coordinator = SettingsCoordinator(basicViewController: basicViewController, initialRoute: .list(false))
+      return .transfer(.handover(coordinator))
+         
+    default:
+      return .none
+    }
+  } else {
+    return .none
+  }
+```
+
+In the code example provided, we can recursively push the `NewsListCoordinator`, subscribing to and processing events from the child `NewsListCoordinator`. Here, we transform the `colorRoute` event from the child `NewsListCoordinator` and re-send it as our own `colorRoute`. This ensures that, regardless of the depth of the hierarchy, we can handle `colorRoute` events from any depth in the root `NewsListCoordinator`.

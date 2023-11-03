@@ -1,6 +1,6 @@
 # AdaptiveCoordinator
 
-AdaptiveCoordinator是一个导航库，用于混合使用UIKit和SwiftUI。
+AdaptiveCoordinator 是一个导航库，用于混合使用 UIKit 和 SwiftUI。
 
 - [基本使用](#基本使用)
 - [进阶使用](#进阶使用)
@@ -164,3 +164,52 @@ class NewsCoordinator: SplitCoordinator<NewsRoute> {
 
 在上述代码中，我们首先在 `NewsRoute` 中对 `listRoute` 和 `detailRoute` 进行了定义，以便在事件订阅时进行区分并转换。接着，在创建 `NewsListCoordinator` 和 `NewsDetailCoordinator` 的实例时，我们使用了 `pullback` 方法并传递了闭包来指定如何转换事件。这样一来，当 `NewsListCoordinator` 收到跳转到 `info` 或 `detail` 的事件时，`NewsCoordinator` 也会被相应地通知，并在 `case let .listRoute(route):` 块中进行处理。
 
+### `drop` 方法
+
+在框架中，我们实现了一种基本机制来自动回收不再需要的 `Coordinator` 对象。然而，当涉及到复杂的多层级结构时，依赖于这种自动回收机制可能会出现问题。因此，我们推荐在需要重置大量视图层级时（例如，去除整个导航分支），使用 `drop` 方法来显式地管理视图树的回收。此方法将后序遍历视图树，并在每个层级释放对应的视图控制器或 `UIHostingController`。
+
+```swift
+case let .colorRoute(route):
+  switch route {
+    case .settings:
+      drop(animated: false)
+      // or use `return prepare(to: .settings)`
+      let coordinator = SettingsCoordinator(basicViewController: basicViewController, initialRoute: .list(false))
+      return .transfer(.handover(coordinator))
+```
+
+例如，在上述代码中，我们手动调用 `drop` 方法来重置当前 `StackCoordinator` 的子视图节点，然后启动 `SettingsCoordinator` 以执行下一步操作。通过这种方式，可以一次性且安全地切换整个视图分支。
+
+### `handle` 方法
+
+作为 `drop` 方法的补充，我们还提供了 `handle` 方法，以实现一次性导航至某个深层级视图的功能，亦即“深层链接”（deeplink）。当你需要一次性导航到深层视图时，可以直接在更高层级的视图节点提供相应的 `route` 和 `prepare` 方法，以便简化深层视图的推送。如果你需要同时构建中间各个视图，你可以在各个层级实现 `deeplinkable` 协议，并在最顶层调用 `handle` 方法。这样，框架会根据提供的方法，逐层构建相应的 `Coordinator`，并递归调用 `handle` 方法，以完成导航至深层视图的操作。
+
+### 重发送
+
+想象这样一种情况：我们需要递归地导航至某个视图，但我们希望处理这个导航请求的是根视图节点，而不是最早接收事件的节点。在这种情况下，我们可能会考虑使用 `pullback` 来订阅子 `Coordinator` 的事件，但如果层级结构不是固定的，该如何是处理？此时，我们可以在 `prepare` 方法中返回 `.send(<RouteType>)` 来进行事件的重发送，这种做法等同于 `Coordinator` 直接接收到了该 `RouteType` 的导航请求。通过事件重发送，我们可以把非根视图节点的导航请求转换并向上递归传递。
+
+```swift
+case let .newListRoute(route):
+  if case let .colorRoute(colorRoute) = route {
+    return .send(.colorRoute(colorRoute))
+  }
+  return .none
+      
+case let .colorRoute(route):
+  if isRoot {
+    switch route {
+    case .settings:
+      drop(animated: false)
+      // 或者使用 `return prepare(to: .settings)`
+      let coordinator = SettingsCoordinator(basicViewController: basicViewController, initialRoute: .list(false))
+      return .transfer(.handover(coordinator))
+         
+    default:
+      return .none
+    }
+  } else {
+    return .none
+  }
+```
+
+在上述代码示例中，我们可以递归地推送 `NewsListCoordinator`，订阅并处理子 `NewsListCoordinator` 的事件。此处，我们转换了子 `NewsListCoordinator` 的 `colorRoute` 事件，并作为自己的 `colorRoute` 重发送。这使得无论层级深度几何，我们都可以在根 `NewsListCoordinator` 中处理任意深度的子 `NewsListCoordinator` 的 `colorRoute` 事件。
