@@ -9,7 +9,7 @@ import Combine
 import DequeModule
 import UIKit
 
-public class StackViewController: UINavigationController {
+open class StackViewController: UINavigationController {
   var _didAddViewController = PassthroughSubject<Void, Never>()
   var _didRemoveViewController = PassthroughSubject<[UIViewController], Never>()
   

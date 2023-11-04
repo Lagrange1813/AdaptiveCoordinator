@@ -36,5 +36,4 @@ public enum SplitTransfer: Transfer {
   case supplmentary(TransferType)
   case present(UIViewController, Bool = true)
   case dimiss(Bool = true)
-  case none
 }

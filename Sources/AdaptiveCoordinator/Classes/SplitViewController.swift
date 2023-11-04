@@ -8,7 +8,7 @@
 import Combine
 import UIKit
 
-public class SplitViewController: UISplitViewController {
+open class SplitViewController: UISplitViewController {
   private var _didAddViewController = PassthroughSubject<Void, Never>()
   private var _didRemoveViewController = PassthroughSubject<[UIViewController], Never>()
   
@@ -30,7 +30,7 @@ public class SplitViewController: UISplitViewController {
   }
   
   @available(*, unavailable)
-  required init?(coder: NSCoder) {
+  required public init?(coder: NSCoder) {
     fatalError("init(coder:) has not been implemented")
   }
   

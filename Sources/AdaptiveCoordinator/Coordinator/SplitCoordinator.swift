@@ -70,7 +70,7 @@ open class SplitCoordinator<RouteType: Route>: Coordinator {
       }.store(in: &_cancellables)
   }
   
-  private var isCollapsed: Bool {
+  public var isCollapsed: Bool {
     basicViewController.isCollapsed
   }
   
@@ -101,9 +101,6 @@ public extension SplitCoordinator {
       
     case let .dimiss(animated):
       basicViewController.dismiss(animated: animated)
-      
-    case .none:
-      break
     }
   }
   
@@ -138,7 +135,7 @@ extension SplitCoordinator {
       basicViewController.secondary
     case .supplmentary:
       nil
-    case .present, .dimiss, .none:
+    case .present, .dimiss:
       nil
     }
   }
