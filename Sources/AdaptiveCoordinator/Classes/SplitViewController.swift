@@ -16,6 +16,7 @@ open class SplitViewController: UISplitViewController {
   public lazy var didRemoveViewController = _didRemoveViewController.eraseToAnyPublisher()
   
   public lazy var primary = StackViewController()
+  public lazy var supplementary = StackViewController()
   public lazy var secondary = StackViewController()
   public lazy var compact = StackViewController()
   
@@ -30,14 +31,14 @@ open class SplitViewController: UISplitViewController {
   }
   
   @available(*, unavailable)
-  required public init?(coder: NSCoder) {
+  public required init?(coder: NSCoder) {
     fatalError("init(coder:) has not been implemented")
   }
   
   func configure() {
     setViewController(primary, for: .primary)
     setViewController(secondary, for: .secondary)
-    setViewController(compact, for: .compact)
+//    setViewController(compact, for: .compact)
   }
   
   func addSubscriber() {
@@ -89,5 +90,35 @@ public extension SplitViewController {
         completion?()
       }
     }
+  }
+}
+
+public class UniversalSplitViewController: SplitViewController, UISplitViewControllerDelegate {
+  private var stackForExpanding: [UIViewController] = []
+  
+  override init() {
+    super.init()
+    delegate = self
+  }
+  
+  public func splitViewController(_ svc: UISplitViewController, topColumnForCollapsingToProposedTopColumn proposedTopColumn: UISplitViewController.Column) -> UISplitViewController.Column {
+    let viewControllers = secondary.viewControllers
+    secondary.viewControllers = []
+    primary.viewControllers.append(contentsOf: viewControllers)
+    return .primary
+  }
+  
+  public func splitViewController(_ svc: UISplitViewController, displayModeForExpandingToProposedDisplayMode proposedDisplayMode: UISplitViewController.DisplayMode) -> UISplitViewController.DisplayMode {
+    let count = primary.viewControllers.count
+    if count > 1 {
+      stackForExpanding.append(contentsOf: primary.viewControllers[1..<count])
+      primary.viewControllers.removeSubrange(1..<count)
+    }
+    return preferredDisplayMode
+  }
+  
+  public func splitViewControllerDidExpand(_ svc: UISplitViewController) {
+    secondary.viewControllers.append(contentsOf: stackForExpanding)
+    stackForExpanding.removeAll()
   }
 }

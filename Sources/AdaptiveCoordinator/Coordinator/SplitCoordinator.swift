@@ -9,6 +9,11 @@ import Combine
 import UIKit
 
 open class SplitCoordinator<RouteType: Route>: Coordinator {
+  public enum Strategy {
+    case merge
+    case custom(SplitViewController)
+  }
+  
   public typealias RouteType = RouteType
   public typealias BasicViewControllerType = SplitViewController
   public typealias TransferType = SplitTransfer
@@ -17,6 +22,9 @@ open class SplitCoordinator<RouteType: Route>: Coordinator {
   
   public let id: UUID
   public private(set) var basicViewController: BasicViewControllerType
+  ///
+  /// The displayables of all columns.
+  ///
   public var children = [any Displayable]()
   private let _forwarder = PassthroughSubject<RouteType, Never>()
   public lazy var forwarder: AnyPublisher<RouteType, Never> = _forwarder.eraseToAnyPublisher()
@@ -25,12 +33,16 @@ open class SplitCoordinator<RouteType: Route>: Coordinator {
   public private(set) var isInitial: Bool = true
   
   public init(
-    basicViewController: BasicViewControllerType = .init(),
-    configure: ((BasicViewControllerType) -> Void)? = nil,
+    strategy: Strategy,
     initialRoute: RouteType
   ) {
     self.id = UUID()
-    self.basicViewController = basicViewController
+    self.basicViewController = switch strategy {
+    case .merge:
+      UniversalSplitViewController()
+    case let .custom(splitViewController):
+      splitViewController
+    }
     
     _addSubscriber()
     transfer(to: initialRoute)

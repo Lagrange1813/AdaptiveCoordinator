@@ -17,6 +17,9 @@ open class StackViewController: UINavigationController {
     _didAddViewController
       .eraseToAnyPublisher()
   
+  ///
+  /// The view controllers that have been removed from the stack.
+  /// 
   public lazy var didRemoveViewController =
     _didRemoveViewController
       .eraseToAnyPublisher()

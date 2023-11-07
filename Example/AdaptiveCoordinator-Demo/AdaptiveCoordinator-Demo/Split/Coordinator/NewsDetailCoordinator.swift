@@ -15,11 +15,26 @@ enum NewsDetailRoute: Route {
 }
 
 class NewsDetailCoordinator: StackCoordinator<NewsDetailRoute> {
+  let isCollapsed: Bool
+  
+  init(
+    basicViewController: StackViewController,
+    initialRoute: NewsDetailRoute,
+    isCollapsed: Bool
+  ) {
+    self.isCollapsed = isCollapsed
+    
+    super.init(
+      basicViewController: basicViewController,
+      initialRoute: initialRoute
+    )
+  }
+  
   override func prepare(to route: NewsDetailRoute) -> ActionType<StackTransfer, NewsDetailRoute> {
     switch route {
     case .detail(let str):
-      let viewController = NewsDetailViewController(str)
-      return .transfer(.set([viewController]))
+      let viewController = NewsDetailViewController(str, router: weakRouter)
+      return .transfer(isCollapsed ? .push(viewController) : .set([viewController]))
     case .info:
       return .none
     }

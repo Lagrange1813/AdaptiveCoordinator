@@ -24,21 +24,34 @@ class NewsCoordinator: SplitCoordinator<NewsRoute> {
   var cancellables = Set<AnyCancellable>()
   
   init(
-    basicViewController: SplitCoordinator<NewsRoute>.BasicViewControllerType = .init(),
     initialRoute: NewsRoute
   ) {
-    super.init(basicViewController: basicViewController, configure: { svc in
-      svc.preferredSplitBehavior = .tile
-      svc.preferredDisplayMode = .oneBesideSecondary
-    }, initialRoute: initialRoute)
+    super.init(
+      strategy: .merge,
+      initialRoute: initialRoute
+    )
     
-    basicViewController.didAddViewController
+//    basicViewController.didAddViewController
+//      .sink { [unowned self] in
+//        print(dump() + "\n")
+//      }
+//      .store(in: &cancellables)
+//    
+//    basicViewController.didRemoveViewController
+//      .sink { [unowned self] _ in
+//        print(dump() + "\n")
+//      }
+//      .store(in: &cancellables)
+    
+    basicViewController
+      .didAddViewController
       .sink { [unowned self] in
         print(dump() + "\n")
       }
       .store(in: &cancellables)
     
-    basicViewController.didRemoveViewController
+    basicViewController
+      .didRemoveViewController
       .sink { [unowned self] _ in
         print(dump() + "\n")
       }
@@ -70,11 +83,27 @@ class NewsCoordinator: SplitCoordinator<NewsRoute> {
         return .transfer(.present(viewController))
         
       case let .detail(str):
-        let coordinator = NewsDetailCoordinator(basicViewController: basicViewController.secondary, initialRoute: .detail(str))
-        pullback(subCoordinator: coordinator) {
-          .detailRoute($0)
+        if isCollapsed {
+          let coordinator = NewsDetailCoordinator(
+            basicViewController: basicViewController.primary,
+            initialRoute: .detail(str),
+            isCollapsed: isCollapsed
+          )
+          pullback(subCoordinator: coordinator) {
+            .detailRoute($0)
+          }
+          return .transfer(.primary(.handover(coordinator)))
+        } else {
+          let coordinator = NewsDetailCoordinator(
+            basicViewController: basicViewController.secondary,
+            initialRoute: .detail(str),
+            isCollapsed: isCollapsed
+          )
+          pullback(subCoordinator: coordinator) {
+            .detailRoute($0)
+          }
+          return .transfer(.secondary(.handover(coordinator)))
         }
-        return .transfer(.secondary(.handover(coordinator)))
       }
       
     case let .detailRoute(route):

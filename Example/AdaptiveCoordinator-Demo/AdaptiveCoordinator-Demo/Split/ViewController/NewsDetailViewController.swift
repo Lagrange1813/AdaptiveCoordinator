@@ -10,9 +10,14 @@ import UIKit
 
 class NewsDetailViewController: UIViewController {
   let news: String
+  let router: WeakRouter<NewsDetailRoute>
   
-  init(_ news: String) {
+  init(
+    _ news: String,
+    router: WeakRouter<NewsDetailRoute>
+  ) {
     self.news = news
+    self.router = router
     super.init(nibName: nil, bundle: nil)
     configure()
   }
@@ -26,5 +31,17 @@ class NewsDetailViewController: UIViewController {
     view.backgroundColor = .white
     
     title = news
+    
+    let infoBarButtonItem = UIBarButtonItem(
+      image: UIImage(systemName: "info.circle"),
+      style: .plain,
+      target: self,
+      action: #selector(infoBarButtonItemDidTouch)
+    )
+    navigationItem.rightBarButtonItem = infoBarButtonItem
+  }
+  
+  @objc func infoBarButtonItemDidTouch() {
+    router.transfer(to: .info)
   }
 }
