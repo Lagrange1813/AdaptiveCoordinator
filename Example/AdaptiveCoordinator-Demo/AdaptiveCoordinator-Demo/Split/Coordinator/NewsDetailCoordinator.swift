@@ -11,6 +11,7 @@ import Foundation
 
 enum NewsDetailRoute: Route {
   case detail(String)
+  case additional(String)
   case info
 }
 
@@ -35,6 +36,11 @@ class NewsDetailCoordinator: StackCoordinator<NewsDetailRoute> {
     case .detail(let str):
       let viewController = NewsDetailViewController(str, router: weakRouter)
       return .transfer(isCollapsed ? .push(viewController) : .set([viewController]))
+    
+    case .additional(let str):
+      let viewController = NewsDetailAdditionalViewController(str, router: weakRouter)
+      return .transfer(.push(viewController))
+      
     case .info:
       return .none
     }

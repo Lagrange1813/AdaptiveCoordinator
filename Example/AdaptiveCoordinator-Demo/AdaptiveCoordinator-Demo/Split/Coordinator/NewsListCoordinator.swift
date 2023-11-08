@@ -21,8 +21,10 @@ class NewsListCoordinator: StackCoordinator<NewsListRoute> {
     case .list:
       let viewController = NewsListViewController(unownedRouter)
       return .transfer(.push(viewController))
+      
     case .info:
       return .none
+      
     case .detail:
       return .none
     }

@@ -25,6 +25,9 @@ public protocol Coordinator: Displayable, Router, Dumpable {
   var children: [any Displayable] { get set }
   var forwarder: AnyPublisher<RouteType, Never> { get }
 
+  // Setter
+  func trySetBasicViewController(_ viewController: UIViewController?)
+
   // Functions
   func perform(_ transfer: TransferType)
   func pullback<SubCoordinator: Coordinator>(
@@ -68,15 +71,6 @@ public extension Coordinator {
 extension Coordinator {
   var numOfChildren: Int {
     children.count
-  }
-
-  func addChild(_ displayable: Displayable) {
-    children.append(displayable)
-    displayable.displayerID = id
-  }
-
-  func removeChild(_ displayable: Displayable) {
-    children.removeAll { $0.viewController === displayable.viewController }
   }
 
   func shouldRemove(child: any Displayable, with viewController: UIViewController) -> Bool {

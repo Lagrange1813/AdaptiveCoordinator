@@ -31,18 +31,6 @@ class NewsCoordinator: SplitCoordinator<NewsRoute> {
       initialRoute: initialRoute
     )
     
-//    basicViewController.didAddViewController
-//      .sink { [unowned self] in
-//        print(dump() + "\n")
-//      }
-//      .store(in: &cancellables)
-//    
-//    basicViewController.didRemoveViewController
-//      .sink { [unowned self] _ in
-//        print(dump() + "\n")
-//      }
-//      .store(in: &cancellables)
-    
     basicViewController
       .didAddViewController
       .sink { [unowned self] in
@@ -62,7 +50,10 @@ class NewsCoordinator: SplitCoordinator<NewsRoute> {
     switch route {
     case .list:
       if isInitial {
-        let coordinator = NewsListCoordinator(basicViewController: basicViewController.primary, initialRoute: .list)
+        let coordinator = NewsListCoordinator(
+          basicViewController: primary,
+          initialRoute: .list
+        )
         pullback(subCoordinator: coordinator) {
           .listRoute($0)
         }
@@ -83,32 +74,23 @@ class NewsCoordinator: SplitCoordinator<NewsRoute> {
         return .transfer(.present(viewController))
         
       case let .detail(str):
-        if isCollapsed {
-          let coordinator = NewsDetailCoordinator(
-            basicViewController: basicViewController.primary,
-            initialRoute: .detail(str),
-            isCollapsed: isCollapsed
-          )
-          pullback(subCoordinator: coordinator) {
-            .detailRoute($0)
-          }
-          return .transfer(.primary(.handover(coordinator)))
-        } else {
-          let coordinator = NewsDetailCoordinator(
-            basicViewController: basicViewController.secondary,
-            initialRoute: .detail(str),
-            isCollapsed: isCollapsed
-          )
-          pullback(subCoordinator: coordinator) {
-            .detailRoute($0)
-          }
-          return .transfer(.secondary(.handover(coordinator)))
+        let coordinator = NewsDetailCoordinator(
+          basicViewController: secondary,
+          initialRoute: .detail(str),
+          isCollapsed: isCollapsed
+        )
+        pullback(subCoordinator: coordinator) {
+          .detailRoute($0)
         }
+        return .transfer(.secondary(.handover(coordinator)))
       }
       
     case let .detailRoute(route):
       switch route {
       case .detail:
+        return .none
+        
+      case .additional:
         return .none
         
       case .info:
