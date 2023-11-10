@@ -19,13 +19,19 @@ open class StackCoordinator<RouteType: Route>: Coordinator {
   
   // Coordinator
   public let id: UUID
-  public private(set) var basicViewController: BasicViewControllerType
+  public private(set) var basicViewController: BasicViewControllerType {
+    didSet {
+      _subscribeAutoRemove()
+    }
+  }
+
   public var children = [any Displayable]()
   private let _forwarder = PassthroughSubject<RouteType, Never>()
   public lazy var forwarder: AnyPublisher<RouteType, Never> = _forwarder.eraseToAnyPublisher()
   private var _cancellables = Set<AnyCancellable>()
   
   // Stack
+  private var _autoRemoveCancellable: AnyCancellable?
   private var isPresenting: Bool = false
   public private(set) var isInitial: Bool = true
 
@@ -62,7 +68,11 @@ open class StackCoordinator<RouteType: Route>: Coordinator {
       }
       .store(in: &_cancellables)
     
-    basicViewController
+    _subscribeAutoRemove()
+  }
+  
+  func _subscribeAutoRemove() {
+    _autoRemoveCancellable = basicViewController
       .didRemoveViewController
       .sink { [unowned self] viewControllers in
         for viewController in viewControllers {
@@ -72,7 +82,6 @@ open class StackCoordinator<RouteType: Route>: Coordinator {
           }
         }
       }
-      .store(in: &_cancellables)
   }
   
   @MainActor
@@ -88,8 +97,22 @@ public extension StackCoordinator {
   }
 }
 
-// Coordinator
+// MARK: - Coordinator
+
 public extension StackCoordinator {
+  func trySetBasicViewController(_ viewController: UIViewController?) {
+    if let new = viewController as? StackViewController {
+      basicViewController = new
+    }
+  }
+}
+
+public extension StackCoordinator {
+  private func addChild(_ displayable: Displayable) {
+    children.append(displayable)
+    displayable.displayerID = id
+  }
+  
   @MainActor
   func perform(_ transfer: StackTransfer) {
     switch transfer {

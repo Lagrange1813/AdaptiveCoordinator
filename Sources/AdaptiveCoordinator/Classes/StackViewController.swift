@@ -9,7 +9,7 @@ import Combine
 import DequeModule
 import UIKit
 
-public class StackViewController: UINavigationController {
+open class StackViewController: UINavigationController {
   var _didAddViewController = PassthroughSubject<Void, Never>()
   var _didRemoveViewController = PassthroughSubject<[UIViewController], Never>()
   
@@ -17,6 +17,9 @@ public class StackViewController: UINavigationController {
     _didAddViewController
       .eraseToAnyPublisher()
   
+  ///
+  /// The view controllers that have been removed from the stack.
+  /// 
   public lazy var didRemoveViewController =
     _didRemoveViewController
       .eraseToAnyPublisher()
