@@ -123,6 +123,9 @@ public extension StackCoordinator {
     case let .pop(animated):
       basicViewController.pop(animated: animated)
       
+    case let .popTo(viewController, animated):
+      basicViewController.popTo(viewController, animated: animated)
+      
     case let .present(viewController, animated):
       basicViewController.present(viewController, animated: animated)
       addChild(viewController)

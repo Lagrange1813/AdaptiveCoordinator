@@ -15,6 +15,7 @@ public protocol Transfer {}
 public enum StackTransfer: Transfer {
   case push(UIViewController, Bool = true)
   case pop(Bool = true)
+  case popTo(UIViewController, Bool = true)
   case present(UIViewController, Bool = true)
   case dimiss(Bool = true)
   case set([UIViewController])

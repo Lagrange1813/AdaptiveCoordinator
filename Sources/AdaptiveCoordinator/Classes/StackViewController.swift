@@ -102,6 +102,18 @@ public extension StackViewController {
     popViewController(animated: animated, completion: completion)
   }
   
+  func popTo(_ viewController: UIViewController, animated: Bool = true,completion: VoidHandler? = nil) {
+    if let viewControllers = popToViewController(viewController, animated: animated) {
+      removingViewControllers.append(contentsOf: viewControllers)
+    }
+    executeAfterTransition(animated: animated) { [weak self] in
+      guard let self else { return }
+      _didRemoveViewController.send(Array(removingViewControllers))
+      removingViewControllers.removeAll()
+      completion?()
+    }
+  }
+  
   override func present(_ viewController: UIViewController, animated: Bool = true, completion: VoidHandler? = nil) {
     viewController.presentationController?.delegate = self
     super.present(viewController, animated: animated) { [weak self] in
