@@ -32,18 +32,23 @@ open class StackCoordinator<RouteType: Route>: Coordinator {
   
   // Stack
   private var _autoRemoveCancellable: AnyCancellable?
-  private var isPresenting: Bool = false
+  public var isPresenting: Bool {
+    basicViewController.presentedViewController != nil
+  }
   public private(set) var isInitial: Bool = true
+  public var rootViewController: UIViewController? = nil
 
   public init(
     basicViewController: BasicViewControllerType = .init(),
-    initialRoute: RouteType
+    initialRoute: RouteType? = nil
   ) {
     self.id = UUID()
     self.basicViewController = basicViewController
 
     _addSubscriber()
-    transfer(to: initialRoute)
+    if let initialRoute {
+      transfer(to: initialRoute)
+    }
   }
   
   private func _addSubscriber() {
@@ -129,11 +134,9 @@ public extension StackCoordinator {
     case let .present(viewController, animated):
       basicViewController.present(viewController, animated: animated)
       addChild(viewController)
-      isPresenting = true
       
     case let .dimiss(animated):
       basicViewController.dismiss(animated: animated)
-      isPresenting = false
       
     case let .set(viewControllers):
       drop(animated: false)
@@ -144,8 +147,12 @@ public extension StackCoordinator {
       if isPresenting {
         perform(.dimiss(animated))
       } else {
-        if numOfChildren > 1 {
-          perform(.pop(animated))
+        if let rootViewController {
+          perform(.popTo(rootViewController, animated))
+        } else {
+          if numOfChildren > 1 {
+            perform(.pop(animated))
+          }
         }
       }
       

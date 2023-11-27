@@ -9,7 +9,7 @@ import AdaptiveCoordinator
 import UIKit
 
 enum ColorRoute: Route, DeepLinkable {
-  case color(String)
+  case color(String?)
   case meaning(String)
   case colors
   case settings
@@ -37,7 +37,7 @@ class ColorCoordinator: StackCoordinator<ColorRoute> {
   override func prepare(to route: ColorRoute) -> ActionType<TransferType, ColorRoute> {
     switch route {
     case .color(let str):
-      if isInitial {
+      if isInitial, let str {
         let viewController = ColorViewController(router: unownedRouter, color: str)
         return .transfer(.push(viewController))
       } else {

@@ -46,7 +46,7 @@ open class SplitCoordinator<RouteType: Route>: Coordinator {
   
   public init(
     strategy: Strategy,
-    initialRoute: RouteType
+    initialRoute: RouteType? = nil
   ) {
     self.id = UUID()
     self.basicViewController = switch strategy {
@@ -57,7 +57,9 @@ open class SplitCoordinator<RouteType: Route>: Coordinator {
     }
     
     _addSubscriber()
-    transfer(to: initialRoute)
+    if let initialRoute {
+      transfer(to: initialRoute)
+    }
     
     // MARK: - Todo
     

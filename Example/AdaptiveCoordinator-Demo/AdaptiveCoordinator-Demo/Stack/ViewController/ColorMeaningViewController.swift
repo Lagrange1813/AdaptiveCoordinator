@@ -78,7 +78,7 @@ class ColorMeaningViewController: UIViewController {
   }
   
   @objc func backButtonDidTap() {
-    router.transfer(to: .color(""))
+    router.transfer(to: .color(nil))
   }
   
   @objc func settingsButtonDidTap() {
