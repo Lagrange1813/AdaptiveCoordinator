@@ -91,7 +91,7 @@ extension SplitViewController: UIAdaptivePresentationControllerDelegate {
 }
 
 public extension SplitViewController {
-  override func present(_ viewController: UIViewController, animated: Bool = true, completion: VoidHandler? = nil) {
+  func presentWithDelegate(_ viewController: UIViewController, animated: Bool = true, completion: VoidHandler? = nil) {
     viewController.presentationController?.delegate = self
     super.present(viewController, animated: animated) { [weak self] in
       self?._didAddViewController.send()

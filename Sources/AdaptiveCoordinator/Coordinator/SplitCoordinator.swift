@@ -186,7 +186,7 @@ public extension SplitCoordinator {
       handle(transferType, in: stack(of: transfer), column: column(of: transfer))
       
     case let .present(viewController, animated):
-      basicViewController.present(viewController, animated: animated)
+      basicViewController.presentWithDelegate(viewController, animated: animated)
       addChild(viewController, in: nil)
       
     case let .dimiss(animated):
