@@ -9,7 +9,9 @@ import Foundation
 
 public class UnownedErased<Value> {
   private var _valueBuilder: () -> Value
-  public lazy var wrappedValue: Value = _valueBuilder()
+  public var wrappedValue: Value {
+    _valueBuilder()
+  }
 
   init(_ value: @escaping () -> Value) {
     self._valueBuilder = value

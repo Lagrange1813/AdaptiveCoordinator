@@ -36,7 +36,7 @@ open class StackCoordinator<RouteType: Route>: Coordinator {
     basicViewController.presentedViewController != nil
   }
   public private(set) var isInitial: Bool = true
-  public var rootViewController: UIViewController? = nil
+  public weak var rootViewController: UIViewController? = nil
 
   public init(
     basicViewController: BasicViewControllerType = .init(),
